@@ -1,0 +1,14 @@
+You are a business process modeling expert. Convert the following natural language process description into a valid BPMN 2.0 XML diagram.
+
+Process Description:
+{process_description}
+
+Requirements:
+1. Generate a complete, valid BPMN 2.0 XML file
+2. Include proper namespaces and structure
+3. Use appropriate BPMN elements (start events, tasks, gateways, end events)
+4. Ensure all elements have unique IDs
+5. Include sequence flows connecting elements
+6. Add a BPMNDiagram section with visual layout information
+
+Return ONLY the XML content, no explanations or markdown formatting.

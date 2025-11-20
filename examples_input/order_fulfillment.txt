@@ -1,0 +1,8 @@
+Customer places an online order for products.
+The system validates payment information.
+If payment is approved, check inventory availability.
+If items are in stock, prepare shipment and send to warehouse.
+The warehouse packages items and ships to customer.
+Customer receives tracking number via email.
+If payment fails, notify customer and request new payment method.
+If items are out of stock, notify customer and offer backorder option.

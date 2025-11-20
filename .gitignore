@@ -1,1 +1,12 @@
 .venv/
+__pycache__/
+*.egg-info/
+
+.env
+*.bpmn
+*.log
+
+note.md
+README.md
+
+tests/
