@@ -1,4 +1,4 @@
-import re
+import re, json
 import logging
 
 from pathlib import Path
@@ -28,29 +28,42 @@ class BPMNGeneratorService:
         """
         logging.info("Starting BPMN generation")
 
-        prompt_content = retrieve_prompt("bpmn_generation_prompt.txt")
+        prompt_content = retrieve_prompt("from_description_to_json.txt")
+        logging.debug("Prompt content:\n%s", prompt_content)
         prompt_template = ChatPromptTemplate.from_messages([
                 ("system", prompt_content)
             ])
-        
-        response = self.llm_service.run_prompt(prompt_template, {"process_description": process_description})
-        logging.debug("LLM response: %s", response)
+        logging.debug("Prompt template:\n%s", prompt_template)
+        json_content = self.llm_service.run_prompt(prompt_template, {"process_description": process_description})
+        logging.debug("JSON LLM response:\n%s", json_content)
 
-        logging.debug("Extracting BPMN file...")
-        xml_file_match = re.search(r"<file>(.*?)</file>", response, re.DOTALL)
+        try:
+            json_loaded =json.loads(json_content)
+            json_bpmn = json_loaded["bpmn"]
+            reasoning = json_loaded["reasoning"]
+
+        except (ValueError, TypeError):
+            logging.error("The response is not a valid JSON object or does not contain a 'process' key.")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+        
+        json_bpmn_str = json.dumps(json_bpmn)
+
+        prompt = retrieve_prompt("from_json_to_xml.txt")
+        prompt_template = ChatPromptTemplate.from_messages([
+                ("system", prompt)
+            ])
+        
+        xml_content = self.llm_service.run_prompt(prompt_template, {"json_bpmn": json_bpmn_str})
+        logging.debug("XML LLM response:\n%s", xml_content)
+        xml_file_match = re.search(r"<file>(.*?)</file>", xml_content, re.DOTALL)
         if not xml_file_match:
+            logging.error("The response does not contain a valid xml BPMN file.")
             raise BPMNGenerationError("Failed to generate BPMN file")
         raw_xml = xml_file_match.group(1).strip()
 
         logging.debug("Validating BPMN...")
         cleaned_xml = self.validator.clean_xml(raw_xml)
         self.validator.validate(cleaned_xml)
-
-        reasoning_match = re.search(r"<reasoning>(.*?)</reasoning>", response, re.DOTALL)
-        if not reasoning_match:
-            reasoning = "Reasoning not found in response."
-        else:
-            reasoning = reasoning_match.group(1).strip()
 
         logging.info("BPMN generation complete")
         return cleaned_xml, reasoning
