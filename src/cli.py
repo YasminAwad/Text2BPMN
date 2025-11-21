@@ -5,33 +5,30 @@ Handles command-line interface and console output formatting.
 
 import sys
 import click
+import logging
+
 from typing import Optional
 
-from .config import validate_api_key, get_model_config
+import src.config as config
 from .utils.file_handler import read_process_description
 from .core.llm import LLMService
 from .core.generator import BPMNGeneratorService
-from .core.validator import BPMNGenerationError
+from .exceptions import BPMNGenerationError
 
 
-def display_header(process_description: str) -> None:
+def display_header() -> None:
     click.echo("=" * 70)
     click.echo(click.style("💡Text2BPMN", fg="white", bold=True).center(80))
     click.echo("=" * 70)
-    click.echo(f"\n📝 Process Description:")
-    click.echo(f"{process_description}\n")
-    click.echo("-" * 70)
 
 
-def display_footer(output_path: str) -> None:
-    click.echo(f"\n✅ BPMN diagram saved to: {click.style(output_path, fg='white', bold=True)}")
-    click.echo("\n" + "=" * 70)
-    click.echo(click.style("✨ Conversion complete!", fg="white", bold=True).center(70))
-    click.echo("=" * 70)
-
+def display_footer(output_path: str, reasoning: str) -> None:
+    click.echo(f"\n✅ BPMN diagram saved to: {click.style(output_path, fg='bright_cyan')}")
     url = "http://demo.bpmn.io/"
     link = f"\033]8;;{url}\033\\bpmn.io\033]8;;\033\\"
-    click.echo(f"\n➡️  You can drag and drop the .bpmn file at {link} for visualization")
+    click.echo(f"\n➡️  You can drag and drop the .bpmn file at {link} for visualization\n\n")
+    click.echo(click.style("📜 Reasoning Report:", fg="white", bold=True))
+    click.echo(click.style(f"{reasoning}", fg="white"))
 
 
 def print_error(message: str) -> None:
@@ -64,7 +61,8 @@ def print_info(message: str) -> None:
 @click.help_option('-h', '--help')
 def cli(description: Optional[str], file: Optional[str], output: str):
     """
-    Convert natural language process descriptions to BPMN 2.0 diagrams.
+    Converts a natural-language process description
+    into a valid BPMN 2.0 diagram (XML .bpmn file) using a Large Language Model (GPT-4.1)
     
     Provide either a description as plain text or use --file to read from a [.txt, .md] file.
     
@@ -83,30 +81,33 @@ def cli(description: Optional[str], file: Optional[str], output: str):
         sys.exit(1)
     
     try:
-        # Setup
-        api_key = validate_api_key()
-        llm_config = get_model_config()
+        settings = config.load_settings()
+        config.setup_logging(settings)
+
+        logging.info("Setup started.")
+
+        api_key = config.get_api_key(settings)
+        logging.info("Api key done")
+        llm_config = config.get_model_config(settings)
+        logging.info("Model config done")
+
         process_description = read_process_description(description, file)
+        logging.info("Process description read.")
         
-        display_header(process_description)
+        logging.info("Setup complete.")
+
+        display_header()
         
-        # Initialize services
         llm_service = LLMService(api_key, llm_config)
         bpmn_service = BPMNGeneratorService(llm_service)
-
-        
-        # Generate reasoning
-        # click.echo(click.style("\n🔍 Analyzing process structure...", fg="white"))
-        # reasoning = bpmn_service.generate_reasoning(process_description)
-        # click.echo(click.style("\n📋 Reasoning:", fg="yellow", bold=True))
-        # click.echo(reasoning)
-        # click.echo("\n" + "-" * 70)
+        logging.info("Services initialized.")
         
         click.echo(click.style("\n⚙️  Generating BPMN diagram...", fg="white"))
-        bpmn_xml = bpmn_service.generate_bpmn(process_description)
+        bpmn_xml, reasoning = bpmn_service.generate_bpmn(process_description)
         bpmn_service.save_bpmn(bpmn_xml, output)
+        logging.info("BPMN diagram generated.")
         
-        display_footer(output)
+        display_footer(output, reasoning)
         
     except KeyboardInterrupt:
         click.echo(click.style("\n\n⚠️  Process interrupted by user.", fg="yellow"), err=True)
