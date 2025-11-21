@@ -1,6 +1,7 @@
 .venv/
 __pycache__/
 *.egg-info/
+output/
 
 .env
 *.bpmn
@@ -9,4 +10,5 @@ __pycache__/
 note.md
 README.md
 
-tests/
+other_input.txt
+test_llm.py
