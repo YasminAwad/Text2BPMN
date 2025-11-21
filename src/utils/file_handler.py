@@ -1,13 +1,9 @@
 from pathlib import Path
 from typing import Optional
+from ..exceptions import FileHandlerError
+import logging
 
-from ..constants import SUPPORTED_FILE_EXTENSIONS
-
-
-class FileHandlerError(Exception):
-    """Raised when file operations fail."""
-    pass
-
+SUPPORTED_FILE_EXTENSIONS=['.txt', '.md']
 
 def read_process_description(description: Optional[str], file: Optional[str]) -> str:
     if file:
@@ -50,10 +46,10 @@ def read_file(file_path: str) -> str:
         raise FileHandlerError(f"Not a file: {file_path}")
     
     # Validate file extension
-    if path.suffix.lower() not in SUPPORTED_FILE_EXTENSIONS():
+    if path.suffix.lower() not in SUPPORTED_FILE_EXTENSIONS:
         raise FileHandlerError(
             f"Unsupported file type: {path.suffix}\n"
-            f"Supported types: {', '.join(SUPPORTED_FILE_EXTENSIONS())}"
+            f"Supported types: {', '.join(SUPPORTED_FILE_EXTENSIONS)}"
         )
     
     # Read file content
@@ -74,9 +70,7 @@ def read_file(file_path: str) -> str:
 # TODO: Change. I don't like it. 10000 is arbitrary. Check gpt-4.1 input limit
 def validate_description(description: str) -> str:
     """
-    Validate process description content.
-    
-    Ensures the description:
+    Ensures the process description:
     - Is not empty
     - Has minimum length (10 chars)
     - Doesn't exceed maximum length (10,000 chars)
@@ -86,9 +80,7 @@ def validate_description(description: str) -> str:
         
     Returns:
         Validated description (stripped of whitespace)
-        
-    Raises:
-        FileHandlerError: If description is invalid
+    
     """
     if not description or not description.strip():
         raise FileHandlerError("Process description is empty")
