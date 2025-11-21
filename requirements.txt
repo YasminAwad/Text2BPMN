@@ -2,4 +2,4 @@ openai==2.8.1
 langchain==1.0.8
 langchain-openai==1.0.3
 click==8.3.1
-dotenv==0.9.9
+pydantic-settings==2.12.0

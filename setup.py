@@ -10,6 +10,7 @@ setup(
         "openai>=2.8.1",
         "click>=8.3.1",
         "dotenv>=0.9.9",
+        "pydantic-settings>=2.12.0",
     ],
     entry_points={
         "console_scripts": [
