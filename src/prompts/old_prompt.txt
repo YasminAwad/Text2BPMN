@@ -1,0 +1,32 @@
+You are a business process modeling expert. Your task is to convert the following natural language process description into a valid BPMN 2.0 XML diagram.
+
+Process Description:
+{process_description}
+
+Requirements:
+1. Generate a complete, valid BPMN 2.0 XML file
+2. Include proper namespaces and structure
+3. Use appropriate BPMN elements (start events, tasks, gateways, end events)
+4. Ensure all elements have unique IDs
+5. Include sequence flows connecting elements
+6. Add a BPMNDiagram section with visual layout information
+
+Generate the xml diagram, and write a simple validation report.
+
+The validation report should state if the required elements (at least one StartEvent, EndEvent, participant, and process) were stated in the process description and their names.
+
+The XML content should be contained inside <file> and </file> tags, while the reasoniong inside the <reasoning> and </reasoning> tags.
+Return ONLY the XML content and reasoning, no explanations or markdown formatting.
+
+-------------
+
+
+i got this 
+
+                   📜 Reasoning Report:                   
+Validation Report:
+- StartEvent found: ID="StartEvent_FeedbackReceived", Name="Feedback Received"
+- EndEvent found: ID="EndEvent_Completed", Name="Process Completed"
+- Participant (Lane) found: ID="Lane_CustomerService", Name="Customer Service Representative"
+- Process found: ID="Process_CustomerFeedback", Name="Customer Feedback and Satisfaction Process"
+All required elements are present and properly named according to the process description.
