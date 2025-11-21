@@ -1,12 +1,14 @@
-from langchain_openai import ChatOpenAI
+from langchain_openai import AzureChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 class LLMService:
     def __init__(self, api_key: str, config: dict):
-        self.llm = ChatOpenAI(
+        self.llm = AzureChatOpenAI(
             model=config["model"],
             api_key=api_key,
+            azure_endpoint=config["azure_endpoint"],
+            api_version=config["api_version"],
             temperature=config["temperature"],
             max_tokens=config["max_tokens"],
         )
