@@ -6,7 +6,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from ..utils.prompt import retrieve_prompt
 from .llm import LLMService
 from .validator import BPMNFileValidator
-from ..exceptions import BPMNGenerationError
+from ..exceptions import BPMNGenerationError, BPMNLayoutError
+from .layout import BPMNLayoutService
 
 
 class BPMNGeneratorService:
@@ -15,6 +16,13 @@ class BPMNGeneratorService:
     
         self.llm_service = llm_service
         self.validator = BPMNFileValidator()
+        try:
+            self.layout_service = BPMNLayoutService()
+            logging.info("Auto-layout enabled")
+        except BPMNLayoutError as e:
+            logging.error(f"Auto-layout service initialization failed: {e}")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+
 
     def generate_bpmn(self, process_description: SyntaxError) -> str:
         """
@@ -35,7 +43,7 @@ class BPMNGeneratorService:
             ])
         logging.debug("Prompt template:\n%s", prompt_template)
         json_content = self.llm_service.run_prompt(prompt_template, {"process_description": process_description})
-        logging.debug("JSON LLM response:\n%s", json_content)
+        logging.debug("COMPLEX JSON LLM response:\n%s", json_content)
 
         try:
             json_loaded =json.loads(json_content)
@@ -48,13 +56,39 @@ class BPMNGeneratorService:
         
         json_bpmn_str = json.dumps(json_bpmn)
 
-        prompt = retrieve_prompt("from_json_to_xml.txt")
+
+        # SIMPLER JSON
+            
+
+        prompt_content = retrieve_prompt("simpler_json.txt")
+        logging.debug("Prompt content:\n%s", prompt_content)
+        prompt_template = ChatPromptTemplate.from_messages([
+                ("system", prompt_content)
+            ])
+        logging.debug("Prompt template:\n%s", prompt_template)
+        simpler_json_content = self.llm_service.run_prompt(prompt_template, {"original_json": json_bpmn_str})
+        logging.debug("SIMPLER JSON LLM response:\n%s", json_content)
+
+        try:
+            simpler_json_loaded =json.loads(simpler_json_content)
+            simpler_json_bpmn = simpler_json_loaded["bpmn"]
+        except (ValueError, TypeError):
+            logging.error("The response is not a valid JSON object or does not contain a 'process' key.")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+        
+        simpler_json_bpmn_str = json.dumps(simpler_json_bpmn)
+
+
+
+        # GENERATE FIRST XML
+
+        prompt = retrieve_prompt("from_simpler_json_to_xml.txt")
         prompt_template = ChatPromptTemplate.from_messages([
                 ("system", prompt)
             ])
         
         xml_content = self.llm_service.run_prompt(prompt_template, {"json_bpmn": json_bpmn_str})
-        logging.debug("XML LLM response:\n%s", xml_content)
+        logging.debug("FIRST XML LLM response:\n%s", xml_content)
         xml_file_match = re.search(r"<file>(.*?)</file>", xml_content, re.DOTALL)
         if not xml_file_match:
             logging.error("The response does not contain a valid xml BPMN file.")
@@ -65,8 +99,44 @@ class BPMNGeneratorService:
         cleaned_xml = self.validator.clean_xml(raw_xml)
         self.validator.validate(cleaned_xml)
 
+        logging.info("Applying auto-layout...")
+        try:
+            bpmn_xml = self.layout_service.apply_layout(cleaned_xml)
+            logging.info("Auto-layout applied successfully")
+        except BPMNLayoutError as e:
+            logging.error(f"Auto-layout failed, using original: {e}")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+
+
+
+
+        # GENERATE SECOND XML   
+        prompt = retrieve_prompt("from_complex_json_to_xml.txt")
+        prompt_template = ChatPromptTemplate.from_messages([
+                ("system", prompt)
+            ])
+        
+        try:
+            enriched_xml_content = self.llm_service.run_prompt(prompt_template, {"original_bpmn": bpmn_xml, "simple_json": simpler_json_bpmn_str, "enriched_json": json_bpmn_str})
+        except Exception as e:
+            logging.error(f"Failed to run ENRICHED llm chain: {str(e)}")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+        
+        logging.debug("SECOND XML LLM response:\n%s", enriched_xml_content)
+        enriched_xml_file_match = re.search(r"<file>(.*?)</file>", enriched_xml_content, re.DOTALL)
+        if not enriched_xml_file_match:
+            logging.error("The response does not contain a valid xml BPMN file.")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+        enriched_raw_xml = enriched_xml_file_match.group(1).strip()
+
+        logging.debug("Validating BPMN...")
+        cleaned_xml = self.validator.clean_xml(enriched_raw_xml)
+        self.validator.validate(cleaned_xml)
+
+        
+
         logging.info("BPMN generation complete")
-        return cleaned_xml, reasoning
+        return cleaned_xml, reasoning # bpmn_xml
     
     def save_bpmn(self, bpmn_xml: str, save_path: str) -> None:
         """

@@ -1,0 +1,225 @@
+You are a business process modeling expert. Your task is to convert the following json (representing a business process description) into a valid BPMN 2.0 XML diagram.
+
+Requirements:
+1. Generate a complete, valid BPMN 2.0 XML file
+2. Include proper namespaces and structure
+3. There is at most 1 pool
+4. Only use these element types: startEvent, endEvent, task, exclusiveGateway, inclusiveGateway, parallelGateway, intermediateEvent
+5. Ensure all elements have unique IDs
+6. Include sequence flows connecting elements
+7. Add a BPMNDiagram section with visual layout information
+8. No groups, text annotations, or associations
+9. For gateways, make sure gatewayDirection is properly set (diverging|converging)
+10. For events, set eventType correctly (none|message|timer|error|conditional).
+11. Pool and lane should match (if present) the only pool / lane.
+12. Keep sequence flows as normal, connecting sourceRef to targetRef. Conditional expressions are allowed, used in labeling only
+13. No messageFlows
+14. If you include sub-processes, do not expand their elements.
+
+Example of valid BPMN 2.0 XML diagram:
+
+<?xml version="1.0" encoding="UTF-8"?><bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1r6uvtt" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="12.0.0">
+  <bpmn:collaboration id="Collaboration_1euq2fm">
+    <bpmn:participant id="Participant_1uu4c6f" name="Pool / Participant" processRef="Process_0zjjsxm"/>
+  </bpmn:collaboration>
+  <bpmn:process id="Process_0zjjsxm" name="Pool / Participant">
+    <bpmn:laneSet id="LaneSet_18deus5">
+      <bpmn:lane id="Lane_0k6zdni" name="Customer Support">
+        <bpmn:flowNodeRef>Event_0ix3gle</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1ruky8s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0ysw5iv</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1tr7rln</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_15ckywo</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_171btsa" name="Technical Support">
+        <bpmn:flowNodeRef>Activity_0ix8fan</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0saq41j" name="Advanced Support">
+        <bpmn:flowNodeRef>Activity_0mvbjo6</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1rtovro" name="Expert Support">
+        <bpmn:flowNodeRef>Activity_0bgz04y</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Event_0ix3gle" name="Start Support Process">
+      <bpmn:outgoing>Flow_0szra3d</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_1ruky8s" name="Initial Support">
+      <bpmn:incoming>Flow_0szra3d</bpmn:incoming>
+      <bpmn:outgoing>Flow_11gvh68</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0ysw5iv" name="Escalation Decision">
+      <bpmn:incoming>Flow_11gvh68</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ucxyuh</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0j6haz8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ley8i4</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ozpldq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_0ix8fan" name="Level 1 Escalation">
+      <bpmn:incoming>Flow_1ucxyuh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jlj31u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0mvbjo6" name="Level 2 Escalation">
+      <bpmn:incoming>Flow_0j6haz8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0727a30</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0bgz04y" name="Level 3 Escalation">
+      <bpmn:incoming>Flow_1ley8i4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0py3yk7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1tr7rln" name="Resolution">
+      <bpmn:incoming>Flow_0ozpldq</bpmn:incoming>
+      <bpmn:incoming>Flow_0jlj31u</bpmn:incoming>
+      <bpmn:incoming>Flow_0727a30</bpmn:incoming>
+      <bpmn:incoming>Flow_0py3yk7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1j8lavq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_15ckywo" name="End Support Process">
+      <bpmn:incoming>Flow_1j8lavq</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0szra3d" sourceRef="Event_0ix3gle" targetRef="Activity_1ruky8s"/>
+    <bpmn:sequenceFlow id="Flow_11gvh68" sourceRef="Activity_1ruky8s" targetRef="Gateway_0ysw5iv"/>
+    <bpmn:sequenceFlow id="Flow_1ucxyuh" name="Issue requires Level 1 escalation" sourceRef="Gateway_0ysw5iv" targetRef="Activity_0ix8fan"/>
+    <bpmn:sequenceFlow id="Flow_0j6haz8" name="Issue requires Level 2 escalation" sourceRef="Gateway_0ysw5iv" targetRef="Activity_0mvbjo6"/>
+    <bpmn:sequenceFlow id="Flow_1ley8i4" name="Issue requires Level 3 escalation" sourceRef="Gateway_0ysw5iv" targetRef="Activity_0bgz04y"/>
+    <bpmn:sequenceFlow id="Flow_0ozpldq" name="Issue resolved without escalation" sourceRef="Gateway_0ysw5iv" targetRef="Activity_1tr7rln"/>
+    <bpmn:sequenceFlow id="Flow_0jlj31u" sourceRef="Activity_0ix8fan" targetRef="Activity_1tr7rln"/>
+    <bpmn:sequenceFlow id="Flow_0727a30" sourceRef="Activity_0mvbjo6" targetRef="Activity_1tr7rln"/>
+    <bpmn:sequenceFlow id="Flow_0py3yk7" sourceRef="Activity_0bgz04y" targetRef="Activity_1tr7rln"/>
+    <bpmn:sequenceFlow id="Flow_1j8lavq" sourceRef="Activity_1tr7rln" targetRef="Event_15ckywo"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1euq2fm">
+      <bpmndi:BPMNShape id="Participant_1uu4c6f_di" bpmnElement="Participant_1uu4c6f" isHorizontal="true">
+        <dc:Bounds x="100" y="-25" width="1068" height="1000"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0k6zdni_di" bpmnElement="Lane_0k6zdni" isHorizontal="true">
+        <dc:Bounds x="130" y="-25" width="1038" height="250"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_171btsa_di" bpmnElement="Lane_171btsa" isHorizontal="true">
+        <dc:Bounds x="130" y="225" width="1038" height="250"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0saq41j_di" bpmnElement="Lane_0saq41j" isHorizontal="true">
+        <dc:Bounds x="130" y="475" width="1038" height="250"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1rtovro_di" bpmnElement="Lane_1rtovro" isHorizontal="true">
+        <dc:Bounds x="130" y="725" width="1038" height="250"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ix3gle_di" bpmnElement="Event_0ix3gle">
+        <dc:Bounds x="232" y="82" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="218" y="125" width="65" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ruky8s_di" bpmnElement="Activity_1ruky8s">
+        <dc:Bounds x="450" y="58" width="132" height="84"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ysw5iv_di" bpmnElement="Gateway_0ysw5iv" isMarkerVisible="true">
+        <dc:Bounds x="625" y="75" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="624" y="37.5" width="51" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ix8fan_di" bpmnElement="Activity_0ix8fan">
+        <dc:Bounds x="850" y="311" width="132" height="84"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mvbjo6_di" bpmnElement="Activity_0mvbjo6">
+        <dc:Bounds x="850" y="564" width="132" height="84"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bgz04y_di" bpmnElement="Activity_0bgz04y">
+        <dc:Bounds x="850" y="817" width="132" height="84"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tr7rln_di" bpmnElement="Activity_1tr7rln">
+        <dc:Bounds x="850" y="58" width="132" height="84"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15ckywo_di" bpmnElement="Event_15ckywo">
+        <dc:Bounds x="1032" y="82" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1019" y="125" width="62" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0szra3d_di" bpmnElement="Flow_0szra3d">
+        <di:waypoint x="268" y="100"/>
+        <di:waypoint x="450" y="100"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11gvh68_di" bpmnElement="Flow_11gvh68">
+        <di:waypoint x="582" y="100"/>
+        <di:waypoint x="625" y="100"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ucxyuh_di" bpmnElement="Flow_1ucxyuh">
+        <di:waypoint x="650" y="125"/>
+        <di:waypoint x="650" y="353"/>
+        <di:waypoint x="850" y="353"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="621" y="236" width="89" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j6haz8_di" bpmnElement="Flow_0j6haz8">
+        <di:waypoint x="650" y="125"/>
+        <di:waypoint x="650" y="606"/>
+        <di:waypoint x="850" y="606"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="621" y="363" width="89" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ley8i4_di" bpmnElement="Flow_1ley8i4">
+        <di:waypoint x="650" y="125"/>
+        <di:waypoint x="650" y="859"/>
+        <di:waypoint x="850" y="859"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="621" y="489" width="89" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ozpldq_di" bpmnElement="Flow_0ozpldq">
+        <di:waypoint x="675" y="100"/>
+        <di:waypoint x="850" y="100"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="719" y="82" width="88" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jlj31u_di" bpmnElement="Flow_0jlj31u">
+        <di:waypoint x="916" y="311"/>
+        <di:waypoint x="916" y="142"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0727a30_di" bpmnElement="Flow_0727a30">
+        <di:waypoint x="916" y="564"/>
+        <di:waypoint x="916" y="142"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0py3yk7_di" bpmnElement="Flow_0py3yk7">
+        <di:waypoint x="916" y="817"/>
+        <di:waypoint x="916" y="142"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j8lavq_di" bpmnElement="Flow_1j8lavq">
+        <di:waypoint x="982" y="100"/>
+        <di:waypoint x="1032" y="100"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
+
+The XML content should be enclosed inside the tags:
+
+<file>
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions id="Definitions_1r6uvtt" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="12.0.0">
+
+    xml content 
+
+</bpmn:definitions>
+</file>
+
+Respond ONLY with valid BPMN 2.0 XML diagram. Do not include any markdown code fences, preamble, or explanation.
+
+JSON:
+{json_bpmn}

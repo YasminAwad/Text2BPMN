@@ -1,0 +1,19 @@
+You are given a JSON that represents a BPMN 2.0 diagram. Your task is to convert the JSON into a JSON that represents the same process but in a simpler way.
+
+Original JSON:
+{original_json}
+
+Rules to build a simpler representation:
+1. There is at most 1 pool
+2. Only use these element types: startEvent, endEvent, task, exclusiveGateway, inclusiveGateway, parallelGateway, intermediateEvent
+3. No groups, text annotations, or associations
+4. For gateways, make sure gatewayDirection is properly set (diverging|converging)
+5. For events, set eventType correctly (none|message|timer|error|conditional).
+6. Optional fields pool and lane should match (if present) the only pool / lane.
+7. Make sure IDs are consistent.
+8. Keep sequence flows as normal, connecting sourceRef to targetRef. Conditional expressions are allowed, used in labeling only
+9. No messageFlows
+10. If you include sub-processes, do not expand their elements.
+
+Respond ONLY with valid JSON. Do not include any markdown code fences, preamble, or explanation.
+

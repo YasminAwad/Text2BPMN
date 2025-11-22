@@ -1,0 +1,20 @@
+You are a business process modeling expert. Your task is to check the following BPMN 2.0 XML diagram (representing a business process description) reprentation correct and graphically readable.
+
+The diagram to be correct should be a valid xml file, with unique ids.
+
+The diagram to be graphically readable should:
+
+- distanziare correttamente tutti gli elementi in modo che non si sovrappongano
+
+Requirements:
+1. Generate a complete, valid BPMN 2.0 XML file
+2. Include proper namespaces and structure
+3. Use appropriate BPMN elements (start events, tasks, gateways, end events)
+4. Ensure all elements have unique IDs
+5. Include sequence flows connecting elements
+6. Add a BPMNDiagram section with visual layout information
+
+The XML content should be contained inside <file> and </file> tags. Respond ONLY with valid BPMN 2.0 XML diagram. Do not include any markdown code fences, preamble, or explanation.
+
+XML:
+{xml_bpmn}

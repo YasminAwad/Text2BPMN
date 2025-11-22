@@ -29,3 +29,7 @@ class ConfigurationError(Exception):
 class FileHandlerError(Exception):
     """Raised when file operations fail."""
     pass
+
+class BPMNLayoutError(BPMNGeneratorError):
+    """Raised when BPMN auto-layout fails."""
+    pass

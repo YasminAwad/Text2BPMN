@@ -1,0 +1,63 @@
+You are given a JSON that represents a BPMN 2.0 diagram. Your task is to convert the JSON into a JSON that represents the same process but in a simpler way.
+
+Original JSON:
+{original_json}
+
+Instructions:
+1. **Identify Process Boundaries**: Find the triggering event (start) and completion event(s) (end)
+2. **Single Pool Design**: Create ONLY ONE pool representing the primary actor/process. If multiple actors are involved, represent their interactions through tasks within the single pool (e.g., "Receive customer request", "Send approval to manager")
+3. **Avoid Lanes**: Do not use lanes since they add complexity without benefit for auto-layout
+4. **List Activities**: Convert process steps into tasks with short, action-based names (e.g., "Submit form", "Validate data", "Approve request")
+5. **Add Decisions**: Any conditional logic becomes a gateway:
+   - `exclusiveGateway` (XOR): exactly one path taken
+   - `parallelGateway` (AND): all paths taken simultaneously
+   - `inclusiveGateway` (OR): one or more paths taken
+6. **Create Sequence Flows Only**: Connect all elements using sequence flows within the single pool. Do NOT create message flows
+7. **Handle Exceptions**: Use intermediate events or error end events for exceptional cases
+8. **Keep Subprocesses Collapsed**: If you need a subprocess, it will be rendered collapsed, so ensure it has a meaningful name
+
+Rules:
+- Every element must have a unique `id` (use format: `elementType_shortName_number`, e.g., `task_submit_form_1`)
+- Every process needs at least ONE startEvent and ONE endEvent
+- Gateways that diverge (split) should have a corresponding gateway that converges (merge)
+- Task names should be verb + noun (e.g., "Review application", not "Application review")
+- Use ONLY ONE pool - represent all process steps within it
+- Use ONLY sequence flows - NO message flows
+- If multiple actors are mentioned, incorporate their actions as tasks within the single pool
+- Gateway splits must always have matching merges
+
+Respond ONLY with valid JSON following the schema below. Do not include any markdown code fences, preamble, or explanation.
+
+{{
+  "bpmn": {{
+    "process": {{
+      "id": "string (use snake_case)",
+      "name": "string (human-readable process name)",
+      "pools": [
+        {{
+          "id": "string",
+          "name": "string (process or primary actor name)"
+        }}
+      ],
+      "elements": [
+        {{
+          "id": "string (unique identifier)",
+          "type": "startEvent|endEvent|task|exclusiveGateway|inclusiveGateway|parallelGateway|intermediateEvent|subProcess",
+          "name": "string (short, action-based for tasks)",
+          "pool": "string (pool id this element belongs to)",
+          "eventType": "string (for events: none|message|timer|error|conditional)",
+          "gatewayDirection": "string (for gateways: diverging|converging)"
+        }}
+      ],
+      "sequenceFlows": [
+        {{
+          "id": "string",
+          "sourceRef": "string (element id)",
+          "targetRef": "string (element id)",
+          "name": "string (optional - condition label for gateway branches)",
+          "conditionExpression": "string (optional - for XOR branches)"
+        }}
+      ]
+    }}
+  }}
+}}
