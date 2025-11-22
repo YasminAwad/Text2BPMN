@@ -99,13 +99,13 @@ class BPMNGeneratorService:
         cleaned_xml = self.validator.clean_xml(raw_xml)
         self.validator.validate(cleaned_xml)
 
-        logging.info("Applying auto-layout...")
-        try:
-            bpmn_xml = self.layout_service.apply_layout(cleaned_xml)
-            logging.info("Auto-layout applied successfully")
-        except BPMNLayoutError as e:
-            logging.error(f"Auto-layout failed, using original: {e}")
-            raise BPMNGenerationError("Failed to generate BPMN file")
+        # logging.info("Applying auto-layout...")
+        # try:
+        #     bpmn_xml = self.layout_service.apply_layout(cleaned_xml)
+        #     logging.info("Auto-layout applied successfully")
+        # except BPMNLayoutError as e:
+        #     logging.error(f"Auto-layout failed, using original: {e}")
+        #     raise BPMNGenerationError("Failed to generate BPMN file")
 
 
 
@@ -117,7 +117,7 @@ class BPMNGeneratorService:
             ])
         
         try:
-            enriched_xml_content = self.llm_service.run_prompt(prompt_template, {"original_bpmn": bpmn_xml, "simple_json": simpler_json_bpmn_str, "enriched_json": json_bpmn_str})
+            enriched_xml_content = self.llm_service.run_prompt(prompt_template, {"original_bpmn": cleaned_xml, "simple_json": simpler_json_bpmn_str, "enriched_json": json_bpmn_str})
         except Exception as e:
             logging.error(f"Failed to run ENRICHED llm chain: {str(e)}")
             raise BPMNGenerationError("Failed to generate BPMN file")
@@ -132,6 +132,33 @@ class BPMNGeneratorService:
         logging.debug("Validating BPMN...")
         cleaned_xml = self.validator.clean_xml(enriched_raw_xml)
         self.validator.validate(cleaned_xml)
+
+        self.save_bpmn(cleaned_xml, "/home/yasmin/Documents/job_search/companies/ValueBlue-Uthrecht/Text2BPMN/before_adjustment_2.bpmn")
+        
+        # ADJUST XML
+        prompt = retrieve_prompt("adjust_graph.txt")
+        prompt_template = ChatPromptTemplate.from_messages([
+                ("system", prompt)
+            ])
+        
+        try:
+            enriched_xml_content = self.llm_service.run_prompt(prompt_template, {"input_xml": cleaned_xml})
+        except Exception as e:
+            logging.error(f"Failed to run ENRICHED llm chain: {str(e)}")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+        
+        logging.debug("SECOND XML LLM response:\n%s", enriched_xml_content)
+        enriched_xml_file_match = re.search(r"<file>(.*?)</file>", enriched_xml_content, re.DOTALL)
+        if not enriched_xml_file_match:
+            logging.error("The response does not contain a valid xml BPMN file.")
+            raise BPMNGenerationError("Failed to generate BPMN file")
+        enriched_raw_xml = enriched_xml_file_match.group(1).strip()
+
+        logging.debug("Validating BPMN...")
+        cleaned_xml = self.validator.clean_xml(enriched_raw_xml)
+        self.validator.validate(cleaned_xml)
+
+        
 
         
 

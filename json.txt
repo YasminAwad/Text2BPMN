@@ -1,31 +1,3 @@
-Convert the following business process description into a structured JSON format that represents a BPMN 2.0 diagram.
-
-Process Description:
-{process_description}
-
-Instructions:
-1. **Identify Process Boundaries**: Find the triggering event (start) and completion event(s) (end)
-2. **Extract Actors**: Map each actor, department, or system to a pool. If an actor has sub-roles, create lanes within that pool
-3. **List Activities**: Convert process steps into tasks with short, action-based names (e.g., "Submit form", "Validate data", "Approve request")
-4. **Add Decisions**: Any conditional logic becomes a gateway:
-   - `exclusiveGateway` (XOR): exactly one path taken
-   - `parallelGateway` (AND): all paths taken simultaneously
-   - `inclusiveGateway` (OR): one or more paths taken
-5. **Create Sequence Flows**: Connect elements within the same pool (the normal flow)
-6. **Create Message Flows**: Connect elements between different pools (cross-actor communication)
-7. **Handle Exceptions**: Use intermediate events or error end events for exceptional cases
-8. **Handle positioning**: make sure that there are no overlapping elements and that everything is set logically
-
-Rules:
-- Every element must have a unique `id` (use format: `elementType_shortName_number`, e.g., `task_submit_form_1`)
-- Every process needs at least ONE startEvent and ONE endEvent
-- Gateways that diverge (split) should have a corresponding gateway that converges (merge)
-- Task names should be verb + noun (e.g., "Review application", not "Application review")
-- Sequence flows are within pools; message flows are between pools
-- If no explicit actors mentioned, create one pool called "Process"
-
-Respond ONLY with valid JSON following the schema below. Do not include any markdown code fences, preamble, or explanation.
-
 {{
   "bpmn": {{
     "process": {{
