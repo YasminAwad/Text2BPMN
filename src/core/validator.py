@@ -3,17 +3,10 @@ import re
 from ..exceptions import BPMNValidationError
 
 
-class BPMNFileValidator:
+class XMLValidator:
     """Validates and cleans BPMN XML content."""
 
     REQUIRED_ELEMENTS = ["definitions", "process", "startEvent", "endEvent"]
-
-    # Node local names considered "graphical nodes" that should have shapes
-    GRAPHICAL_NODE_LOCALNAMES = {
-        "task", "userTask", "serviceTask", "scriptTask", "startEvent",
-        "endEvent", "intermediateThrowEvent", "exclusiveGateway", "parallelGateway",
-        "subProcess", "callActivity"
-    }
 
     @staticmethod
     def clean_xml(xml: str) -> str:
@@ -40,11 +33,11 @@ class BPMNFileValidator:
                 "Missing XML declaration. BPMN file must start with <?xml version=\"1.0\"?>"
             )
         
-        for element in BPMNFileValidator.REQUIRED_ELEMENTS:
+        for element in XMLValidator.REQUIRED_ELEMENTS:
             if element not in xml:
                 raise BPMNValidationError(
                     f"Missing required BPMN element: <{element}>. "
-                    f"A valid BPMN diagram must contain: {', '.join(BPMNFileValidator.REQUIRED_ELEMENTS)}"
+                    f"A valid BPMN diagram must contain: {', '.join(XMLValidator.REQUIRED_ELEMENTS)}"
                 )
         
         # Basic XML structure check

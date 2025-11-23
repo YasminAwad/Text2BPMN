@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple
 
 from .llm import LLMService
 from .merger import BPMNDiagramHelper
-from .validator import BPMNFileValidator
+from .validator import XMLValidator
 from ..exceptions import BPMNGenerationError
 
 
@@ -15,7 +15,7 @@ class BPMNGeneratorService:
         """Main service orchestrating BPMN generation pipeline."""
         
         self.llm_service = llm_service
-        self.validator = BPMNFileValidator()
+        self.validator = XMLValidator()
         self.merger = BPMNDiagramHelper()
 
     def generate_bpmn(self, process_description: str) -> str:
