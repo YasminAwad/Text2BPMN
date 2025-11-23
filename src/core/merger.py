@@ -288,7 +288,7 @@ class BPMNMerger:
         
         if bpmn_plane is None:
             print("Warning: BPMNPlane not found in the document")
-            return tree
+            return ET.tostring(root, encoding='unicode', xml_declaration=True)
         
         for lane in lanes:
             lane_id = lane.get('id')
@@ -441,7 +441,7 @@ class BPMNMerger:
         
         if not sequence_flows:
             print("No sequence flows to add")
-            return tree
+            return ET.tostring(root, encoding='unicode', xml_declaration=True)
         
         print(f"Adding {len(sequence_flows)} sequence flow(s)...")
         
@@ -552,5 +552,165 @@ class BPMNMerger:
         
         return ET.tostring(root, encoding='unicode', xml_declaration=True)
     
+    def add_participant_shape(self, root, bpmn_plane, process, participant_id, namespaces):
+        """
+        Adds a BPMNShape for the participant based on lane dimensions.
+        """
+        # Find all lanes in the process
+        lane_set = process.find('bpmn:laneSet', namespaces)
+        if lane_set is None:
+            print("Warning: No laneSet found in process")
+            return
+        
+        lanes = lane_set.findall('bpmn:lane', namespaces)
+        if not lanes:
+            print("Warning: No lanes found in laneSet")
+            return
+        
+        # Collect lane dimensions from BPMNShape elements
+        lane_bounds = []
+        for lane in lanes:
+            lane_id = lane.get('id')
+            # Find the corresponding BPMNShape
+            lane_shape = bpmn_plane.find(f".//bpmndi:BPMNShape[@bpmnElement='{lane_id}']", namespaces)
+            if lane_shape is not None:
+                bounds = lane_shape.find('dc:Bounds', namespaces)
+                if bounds is not None:
+                    x = float(bounds.get('x', 0))
+                    y = float(bounds.get('y', 0))
+                    width = float(bounds.get('width', 0))
+                    height = float(bounds.get('height', 0))
+                    lane_bounds.append({
+                        'id': lane_id,
+                        'x': x,
+                        'y': y,
+                        'width': width,
+                        'height': height
+                    })
+        
+        if not lane_bounds:
+            print("Warning: No lane bounds found in diagram")
+            return
+        
+        # Calculate participant shape dimensions
+        min_x = min(lane['x'] for lane in lane_bounds)
+        min_y = min(lane['y'] for lane in lane_bounds)
+        sum_heights = sum(lane['height'] for lane in lane_bounds)
+        first_lane_width = lane_bounds[0]['width']
+        
+        # Calculate final values according to specifications
+        x_value = min_x - 30
+        y_value = min_y
+        width_value = first_lane_width + 30
+        height_value = sum_heights
+        
+        # Create participant BPMNShape
+        bpmnshape_id = "participant_shape_1"
+        participant_shape = ET.Element(f"{{{namespaces['bpmndi']}}}BPMNShape")
+        participant_shape.set('id', bpmnshape_id)
+        participant_shape.set('bpmnElement', participant_id)
+        participant_shape.set('isHorizontal', 'true')
+        
+        # Create dc:Bounds element
+        bounds = ET.Element(f"{{{namespaces['dc']}}}Bounds")
+        bounds.set('x', str(int(x_value)))
+        bounds.set('y', str(int(y_value)))
+        bounds.set('width', str(int(width_value)))
+        bounds.set('height', str(int(height_value)))
+        
+        participant_shape.append(bounds)
+        
+        # Create empty BPMNLabel
+        label = ET.Element(f"{{{namespaces['bpmndi']}}}BPMNLabel")
+        participant_shape.append(label)
+        
+        # Insert participant shape as first element in BPMNPlane
+        bpmn_plane.insert(0, participant_shape)
+        
+        print(f"Added participant shape:")
+        print(f"  ID: {bpmnshape_id}")
+        print(f"  Bounds: x={int(x_value)}, y={int(y_value)}, width={int(width_value)}, height={int(height_value)}")
+
+
+    def add_collaboration_to_bpmn(self, xml_content, main_actor):
+        """
+        Adds a collaboration element to a BPMN XML file.
+        
+        Args:
+            xml_file_path (str): Path to the input BPMN XML file
+            output_file_path (str, optional): Path to save the modified XML. 
+                                            If None, overwrites the input file.
+        
+        Returns:
+            str: Path to the output file
+        """
+        # Parse the XML file
+        tree = ET.ElementTree(ET.fromstring(xml_content))
+        root = tree.getroot()
+        
+        # Define namespaces
+        namespaces = {
+            'bpmn': 'http://www.omg.org/spec/BPMN/20100524/MODEL',
+            'bpmndi': 'http://www.omg.org/spec/BPMN/20100524/DI',
+            'dc': 'http://www.omg.org/spec/DD/20100524/DC',
+            'di': 'http://www.omg.org/spec/DD/20100524/DI'
+        }
+        
+        # Register namespaces to preserve prefixes
+        for prefix, uri in namespaces.items():
+            ET.register_namespace(prefix, uri)
+        
+        # Extract process id and name
+        process = root.find('bpmn:process', namespaces)
+        if process is None:
+            raise ValueError("No bpmn:process element found in the XML")
+        
+        process_id = process.get('id')
+        participant_name = main_actor  # Use id as fallback if name not present
+        
+        # Set collaboration and participant IDs
+        participant_id = "process_participant_1"
+        collaboration_id = "bpmnElement_of_the_Plane_1"
+        
+        # Check if collaboration already exists
+        existing_collab = root.find('bpmn:collaboration', namespaces)
+        if existing_collab is not None:
+            print("Collaboration element already exists. Removing and recreating...")
+            root.remove(existing_collab)
+        
+        # Create collaboration element
+        collaboration = ET.Element(f"{{{namespaces['bpmn']}}}collaboration")
+        collaboration.set('id', collaboration_id)
+        
+        # Create participant element
+        participant = ET.Element(f"{{{namespaces['bpmn']}}}participant")
+        participant.set('id', participant_id)
+        participant.set('name', participant_name)
+        participant.set('processRef', process_id)
+        
+        # Add participant to collaboration
+        collaboration.append(participant)
+        
+        # Insert collaboration before process element
+        process_index = list(root).index(process)
+        root.insert(process_index, collaboration)
+        
+        # Update BPMNPlane bpmnElement attribute and add participant shape
+        bpmn_diagram = root.find('bpmndi:BPMNDiagram', namespaces)
+        if bpmn_diagram is not None:
+            bpmn_plane = bpmn_diagram.find('bpmndi:BPMNPlane', namespaces)
+            if bpmn_plane is not None:
+                bpmn_plane.set('bpmnElement', collaboration_id)
+                print(f"Updated BPMNPlane bpmnElement to: {collaboration_id}")
+                
+                # Add participant shape
+                self.add_participant_shape(root, bpmn_plane, process, participant_id, namespaces)
+            else:
+                print("Warning: BPMNPlane element not found")
+        else:
+            print("Warning: BPMNDiagram element not found")
+
+        
+        return ET.tostring(root, encoding="unicode", xml_declaration=True)
 
 

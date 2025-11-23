@@ -138,22 +138,36 @@ class BPMNGeneratorService:
             i=i+1
         
         ## STEP 5: merge the lanes in unique xml
-
-        merged_xml = self.merger.merge_bpmn_files(laid_out_lanes)
+        
+        try:
+            merged_xml = self.merger.merge_bpmn_files(laid_out_lanes)
+        except Exception as e:
+            logging.error("Failed to merge BPMN files: %s", str(e))
+            raise BPMNGenerationError("Failed to generate BPMN file")
         self.save_bpmn(merged_xml, f"/home/yasmin/Documents/job_search/companies/ValueBlue-Uthrecht/Text2BPMN/lanes/merged.bpmn")
 
-        merged_with_flows = self.merger.add_sequence_flows_from_json(merged_xml,different_flow)
+        try:
+            merged_with_flows = self.merger.add_sequence_flows_from_json(merged_xml,different_flow)
+        except Exception as e:
+            logging.error("Failed to add sequence flows: %s", str(e))
+            raise BPMNGenerationError("Failed to generate BPMN file")
 
         ## STEP 6: add inter-lane sequence flows asking the LLM
 
-        
+        pool_name = json_bpmn["process"]["pool"]["name"]
+        logging.debug("Pool name: %s", pool_name)
 
+        try:
+            complete_xml = self.merger.add_collaboration_to_bpmn(merged_with_flows, pool_name)
+        except Exception as e:
+            logging.error("Failed to add collaboration: %s", str(e))
+            raise BPMNGenerationError("Failed to generate BPMN file")
         logging.info("XML generation completed successfully")
 
 
 
 
-        return merged_with_flows, reasoning # bpmn_xml
+        return complete_xml, reasoning # bpmn_xml
     
     def save_bpmn(self, bpmn_xml: str, save_path: str) -> None:
         """

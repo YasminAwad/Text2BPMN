@@ -185,16 +185,16 @@ class BPMNLayoutService:
         logger.info(f"Layouted BPMN saved to: {output_path}")
 
 
-# Convenience function
-def apply_auto_layout(bpmn_xml: str) -> str:
-    """
-    Convenience function to apply auto-layout.
+# # Convenience function
+# def apply_auto_layout(bpmn_xml: str) -> str:
+#     """
+#     Convenience function to apply auto-layout.
     
-    Args:
-        bpmn_xml: BPMN XML string
+#     Args:
+#         bpmn_xml: BPMN XML string
     
-    Returns:
-        Layouted BPMN XML string
-    """
-    service = BPMNLayoutService()
-    return service.apply_layout(bpmn_xml)
+#     Returns:
+#         Layouted BPMN XML string
+#     """
+#     service = BPMNLayoutService()
+#     return service.apply_layout(bpmn_xml)

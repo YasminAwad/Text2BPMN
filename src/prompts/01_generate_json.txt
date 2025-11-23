@@ -9,9 +9,9 @@ Instructions:
 3. **Identify Lanes**: If you really think the process should be subdivided between different roles of the actor (pool), create different lanes. Assign an order field to lanes (0 = topmost within pool). Each lane should have at least one element.
 4. **List Activities**: Convert process steps into tasks with short, action-based names (e.g., "Submit form", "Validate data", "Approve request")
 5. **Add Decisions**: Any conditional logic becomes a gateway:
-   - `exclusiveGateway` (XOR): exactly one path taken
-   - `parallelGateway` (AND): all paths taken simultaneously
-   - `inclusiveGateway` (OR): one or more paths taken
+   - `exclusiveGateway` (XOR): routes the flow to exactly one path
+   - `parallelGateway` (AND): routes the flow to all paths simultaneously
+   - `inclusiveGateway` (OR): routes the flow to one or more paths
 6. **Create Sequence Flows Only**: Connect all elements using sequence flows within the single pool. Do NOT create message flows
 7. **Handle Exceptions**: Use intermediate events or error end events for exceptional cases
 8. **Keep Subprocesses Collapsed**: If you need a subprocess, it will be rendered collapsed, so ensure it has a meaningful name
@@ -24,6 +24,7 @@ Rules:
 - Use ONLY ONE pool - represent all process steps within it
 - Use ONLY sequence flows - NO message flows
 - Gateway splits must always have matching merges
+- Each gateway should be the sourceRef of at least 2 sequence flows or the targetRef of at least 2 sequence flows
 
 Respond ONLY with valid JSON following the schema below. Do not include any markdown code fences, preamble, or explanation.
 
