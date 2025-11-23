@@ -1,12 +1,12 @@
-You are given a JSON that represents a BPMN 2.0 diagram. Your task is to convert the JSON into a JSON that represents the same process but in a simpler way.
+You are a business process modeling expert. Convert the following business process description into a structured JSON format that represents a BPMN 2.0 diagram.
 
-Original JSON:
-{original_json}
+Process Description:
+{process_description}
 
 Instructions:
 1. **Identify Process Boundaries**: Find the triggering event (start) and completion event(s) (end)
 2. **Single Pool Design**: Create ONLY ONE pool representing the primary actor/process. If multiple actors are involved, represent their interactions through tasks within the single pool (e.g., "Receive customer request", "Send approval to manager")
-3. **Avoid Lanes**: Do not use lanes since they add complexity without benefit for auto-layout
+3. **Identify Lanes**: If you really think the process should be subdivided between different roles of the actor (pool), create different lanes. Assign an order field to lanes (0 = topmost within pool). Each lane should have at least one element.
 4. **List Activities**: Convert process steps into tasks with short, action-based names (e.g., "Submit form", "Validate data", "Approve request")
 5. **Add Decisions**: Any conditional logic becomes a gateway:
    - `exclusiveGateway` (XOR): exactly one path taken
@@ -23,7 +23,6 @@ Rules:
 - Task names should be verb + noun (e.g., "Review application", not "Application review")
 - Use ONLY ONE pool - represent all process steps within it
 - Use ONLY sequence flows - NO message flows
-- If multiple actors are mentioned, incorporate their actions as tasks within the single pool
 - Gateway splits must always have matching merges
 
 Respond ONLY with valid JSON following the schema below. Do not include any markdown code fences, preamble, or explanation.
@@ -33,31 +32,37 @@ Respond ONLY with valid JSON following the schema below. Do not include any mark
     "process": {{
       "id": "string (use snake_case)",
       "name": "string (human-readable process name)",
-      "pools": [
-        {{
-          "id": "string",
-          "name": "string (process or primary actor name)"
-        }}
-      ],
-      "elements": [
-        {{
-          "id": "string (unique identifier)",
-          "type": "startEvent|endEvent|task|exclusiveGateway|inclusiveGateway|parallelGateway|intermediateEvent|subProcess",
-          "name": "string (short, action-based for tasks)",
-          "pool": "string (pool id this element belongs to)",
-          "eventType": "string (for events: none|message|timer|error|conditional)",
-          "gatewayDirection": "string (for gateways: diverging|converging)"
-        }}
-      ],
-      "sequenceFlows": [
-        {{
-          "id": "string",
-          "sourceRef": "string (element id)",
-          "targetRef": "string (element id)",
-          "name": "string (optional - condition label for gateway branches)",
-          "conditionExpression": "string (optional - for XOR branches)"
-        }}
-      ]
+      "pool": {{
+        "id": "string (unique identifier)",
+        "name": "string (actor/department name)"
+        "lanes": [
+          {{
+            "id": "string (unique identifier)",
+            "name": "string (sub-actor or role)",
+            "order": 0,
+            "elements": [
+              {{
+                "id": "string (unique identifier)",
+                "type": "startEvent|endEvent|task|exclusiveGateway|inclusiveGateway|parallelGateway|intermediateEvent",
+                "name": "string (short, action-based for tasks)",
+                "eventType": "string (for events: none|message|timer|error|conditional)"
+              }},
+            ]
+          }}
+        ],
+        "sequenceFlows": [
+          {{
+            "id": "string (unique identifier)",
+            "sourceRef": "identifier of the source element",
+            "targetRef": "identifier of the target element",
+            "name": "string (optional - condition label for gateway branches)",
+            "conditionExpression": "string (optional - for XOR branches)"
+          }}
+        ]
+      }}
     }}
-  }}
+  }},
+  "reasoning": "a validation report (states if the required elements (at least one StartEvent, EndEvent, participant, and process) are stated in the process description. If they are not stated, write how your reasoning created one. If stated, write their correspondent natural language name in the process description)"
 }}
+
+

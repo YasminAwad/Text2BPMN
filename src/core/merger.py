@@ -1,0 +1,556 @@
+import xml.etree.ElementTree as ET
+from typing import List, Dict, Tuple
+import copy
+
+class BPMNMerger:
+    """Class to handle merging multiple BPMN lane files into one."""
+    
+    def __init__(self):
+        self.namespaces = {
+            'bpmn': 'http://www.omg.org/spec/BPMN/20100524/MODEL',
+            'bpmndi': 'http://www.omg.org/spec/BPMN/20100524/DI',
+            'dc': 'http://www.omg.org/spec/DD/20100524/DC',
+            'di': 'http://www.omg.org/spec/DD/20100524/DI',
+            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
+        }      
+
+        # Register namespaces to preserve prefixes
+        for prefix, uri in self.namespaces.items():
+            ET.register_namespace(prefix, uri)
+
+    
+    def get_lane_bounds(self, bpmn_plane, lane_id: str) -> Dict:
+        """Get the bounds of a lane from the diagram."""
+        lane_shape = bpmn_plane.find(
+            f".//bpmndi:BPMNShape[@bpmnElement='{lane_id}']", 
+            self.namespaces
+        )
+        
+        if lane_shape is not None:
+            bounds = lane_shape.find('dc:Bounds', self.namespaces)
+            if bounds is not None:
+                return {
+                    'x': float(bounds.get('x', 0)),
+                    'y': float(bounds.get('y', 0)),
+                    'width': float(bounds.get('width', 0)),
+                    'height': float(bounds.get('height', 0))
+                }
+        return None
+    
+    def is_mock_element(self, element_id: str) -> bool:
+        """Check if an element is a mock start or end event."""
+        if element_id is None:
+            return False
+        return 'mock_start' in element_id.lower() or 'mock_end' in element_id.lower()
+    
+    def remove_mock_elements(self, root, process):
+        """Remove mock start and end events from process and diagram."""
+        # Find all flow nodes in the process
+        elements_to_remove = []
+        
+        for element in process:
+            element_id = element.get('id')
+            if self.is_mock_element(element_id):
+                elements_to_remove.append(element)
+        
+        # Remove mock elements from process
+        for element in elements_to_remove:
+            process.remove(element)
+            print(f"  Removed mock element: {element.get('id')}")
+        
+        # Remove mock elements from diagram
+        bpmn_plane = root.find('.//bpmndi:BPMNPlane', self.namespaces)
+        if bpmn_plane is not None:
+            diagram_elements_to_remove = []
+            
+            for shape in bpmn_plane.findall('.//bpmndi:BPMNShape', self.namespaces):
+                element_ref = shape.get('bpmnElement')
+                if self.is_mock_element(element_ref):
+                    diagram_elements_to_remove.append(shape)
+            
+            for edge in bpmn_plane.findall('.//bpmndi:BPMNEdge', self.namespaces):
+                element_ref = edge.get('bpmnElement')
+                if self.is_mock_element(element_ref):
+                    diagram_elements_to_remove.append(edge)
+            
+            for element in diagram_elements_to_remove:
+                bpmn_plane.remove(element)
+    
+    def adjust_diagram_coordinates(self, bpmn_plane, lane_id: str, x_gap: float, y_gap: float):
+        """Adjust coordinates of all diagram elements in a lane."""
+        # Get all flow node refs for this lane
+        lane_elements = set()
+        
+        # This will be populated by the caller with the actual lane elements
+        # For now, we'll adjust all elements in the plane
+        
+        # Adjust shapes
+        for shape in bpmn_plane.findall('.//bpmndi:BPMNShape', self.namespaces):
+            bounds = shape.find('dc:Bounds', self.namespaces)
+            if bounds is not None:
+                x = float(bounds.get('x', 0))
+                y = float(bounds.get('y', 0))
+                
+                new_x = x - x_gap
+                new_y = y - y_gap
+                
+                bounds.set('x', str(new_x))
+                bounds.set('y', str(new_y))
+        
+        # Adjust edges
+        for edge in bpmn_plane.findall('.//bpmndi:BPMNEdge', self.namespaces):
+            for waypoint in edge.findall('.//di:waypoint', self.namespaces):
+                x = float(waypoint.get('x', 0))
+                y = float(waypoint.get('y', 0))
+                
+                new_x = x - x_gap
+                new_y = y - y_gap
+                
+                waypoint.set('x', str(new_x))
+                waypoint.set('y', str(new_y))
+    
+    def merge_bpmn_files(self, lanes_xml: List[str]):
+        """
+        Merge multiple BPMN lane files into one.
+        
+        Args:
+            file_paths: List of BPMN XML file paths (first file is the base)
+            output_path: Path to save the merged BPMN file
+        """
+        if not lanes_xml:
+            raise ValueError("No files provided for merging")
+        
+        print(f"Merging {len(lanes_xml)} BPMN files...")
+        
+        # Parse the base file (first file)
+
+        base_tree = ET.ElementTree(ET.fromstring(lanes_xml[0]))
+        base_root = base_tree.getroot()
+        base_process = base_root.find('.//bpmn:process', self.namespaces)
+        base_plane = base_root.find('.//bpmndi:BPMNPlane', self.namespaces)
+        
+        if base_process is None or base_plane is None:
+            raise ValueError("Base file must contain process and BPMNPlane elements")
+        
+        # Remove mock elements from base file
+        print("\nProcessing base file (Lane A):")
+        self.remove_mock_elements(base_root, base_process)
+        
+        # Get base lane info
+        base_laneset = base_process.find('.//bpmn:laneSet', self.namespaces)
+        if base_laneset is None:
+            raise ValueError("Base file must contain a laneSet")
+        
+        base_lane = base_laneset.find('.//bpmn:lane', self.namespaces)
+        base_lane_id = base_lane.get('id')
+        base_lane_bounds = self.get_lane_bounds(base_plane, base_lane_id)
+        
+        if base_lane_bounds is None:
+            raise ValueError(f"Could not find bounds for base lane: {base_lane_id}")
+        
+        print(f"Base lane: {base_lane_id}")
+        print(f"  Bounds: x={base_lane_bounds['x']}, y={base_lane_bounds['y']}, "
+              f"width={base_lane_bounds['width']}, height={base_lane_bounds['height']}")
+        
+        current_y_offset = base_lane_bounds['y']
+        current_height = base_lane_bounds['height']
+        max_width = base_lane_bounds['width']
+        
+        # Process each additional file
+        for i, single_lane_xml in enumerate(lanes_xml[1:], 1):
+            print(f"\nProcessing file {i} (Lane B):")
+            
+            # Parse the file to merge
+            merge_tree = ET.ElementTree(ET.fromstring(single_lane_xml))
+            merge_root = merge_tree.getroot()
+            merge_process = merge_root.find('.//bpmn:process', self.namespaces)
+            merge_plane = merge_root.find('.//bpmndi:BPMNPlane', self.namespaces)
+            
+            if merge_process is None or merge_plane is None:
+                print(f"  Skipping {single_lane_xml}: missing process or BPMNPlane")
+                continue
+            
+            # Remove mock elements
+            self.remove_mock_elements(merge_root, merge_process)
+            
+            # Get merge lane info
+            merge_laneset = merge_process.find('.//bpmn:laneSet', self.namespaces)
+            if merge_laneset is None:
+                print(f"  Skipping {single_lane_xml}: no laneSet found")
+                continue
+            
+            merge_lane = merge_laneset.find('.//bpmn:lane', self.namespaces)
+            merge_lane_id = merge_lane.get('id')
+            merge_lane_bounds = self.get_lane_bounds(merge_plane, merge_lane_id)
+            
+            if merge_lane_bounds is None:
+                print(f"  Skipping {single_lane_xml}: could not find lane bounds")
+                continue
+            
+            print(f"Merge lane: {merge_lane_id}")
+            print(f"  Original bounds: x={merge_lane_bounds['x']}, y={merge_lane_bounds['y']}, "
+                  f"width={merge_lane_bounds['width']}, height={merge_lane_bounds['height']}")
+            
+            # Calculate gaps and new positions
+            x_gap = merge_lane_bounds['x'] - base_lane_bounds['x']
+            new_lane_B_y = current_y_offset + current_height
+            y_gap = merge_lane_bounds['y'] - new_lane_B_y
+            
+            print(f"  Gaps: x_gap={x_gap}, y_gap={y_gap}")
+            print(f"  New position: y={new_lane_B_y}")
+            
+            # Update max width
+            max_width = max(max_width, merge_lane_bounds['width'])
+            
+            # Adjust coordinates in merge_plane
+            self.adjust_diagram_coordinates(merge_plane, merge_lane_id, x_gap, y_gap)
+            
+            # Update lane bounds
+            merge_lane_shape = merge_plane.find(
+                f".//bpmndi:BPMNShape[@bpmnElement='{merge_lane_id}']",
+                self.namespaces
+            )
+            if merge_lane_shape is not None:
+                merge_bounds = merge_lane_shape.find('dc:Bounds', self.namespaces)
+                if merge_bounds is not None:
+                    merge_bounds.set('x', str(base_lane_bounds['x']))
+                    merge_bounds.set('y', str(new_lane_B_y))
+                    merge_bounds.set('width', str(max_width))
+            
+            # Add lane to base laneSet
+            base_laneset.append(copy.deepcopy(merge_lane))
+            
+            # Add all process elements (except laneSet) to base process
+            for element in merge_process:
+                tag = element.tag.split('}')[-1]  # Get tag without namespace
+                if tag != 'laneSet':
+                    base_process.append(copy.deepcopy(element))
+            
+            # Add all diagram elements to base plane
+            for element in merge_plane:
+                tag = element.tag.split('}')[-1]
+                if tag in ['BPMNShape', 'BPMNEdge']:
+                    base_plane.append(copy.deepcopy(element))
+            
+            # Update current position for next lane
+            current_y_offset = new_lane_B_y
+            current_height = merge_lane_bounds['height']
+            
+            print(f"  Lane {merge_lane_id} merged successfully")
+        
+        # Update all lane widths to max_width
+        print(f"\nUpdating all lane widths to {max_width}")
+        for lane_shape in base_plane.findall('.//bpmndi:BPMNShape[@isHorizontal="true"]', self.namespaces):
+            bounds = lane_shape.find('dc:Bounds', self.namespaces)
+            if bounds is not None:
+                bounds.set('width', str(max_width))
+        
+        # # Save the merged file
+        # base_tree.write(output_path, encoding='UTF-8', xml_declaration=True)
+        # print(f"\nMerged BPMN saved to: {output_path}")
+        
+        merged_xml_string = ET.tostring(base_root, encoding='unicode', xml_declaration=True)
+        return merged_xml_string
+
+    def add_lane_diagram(self, single_lane_xml):
+        """
+        Add lane diagram information to a BPMN XML file.
+        
+        Args:
+            xml_file_path: Path to the input BPMN XML file
+            output_file_path: Path to save the modified XML (if None, overwrites input)
+        
+        Returns:
+            The modified XML tree
+        """
+        # Parse the XML file
+        # tree = ET.parse(xml_file_path)
+        tree = ET.ElementTree(ET.fromstring(single_lane_xml))
+        root = tree.getroot()
+        
+        # Define namespaces
+        namespaces = {
+            'bpmn': 'http://www.omg.org/spec/BPMN/20100524/MODEL',
+            'bpmndi': 'http://www.omg.org/spec/BPMN/20100524/DI',
+            'dc': 'http://www.omg.org/spec/DD/20100524/DC',
+            'di': 'http://www.omg.org/spec/DD/20100524/DI'
+        }
+        
+        # Register namespaces to preserve prefixes
+        for prefix, uri in namespaces.items():
+            ET.register_namespace(prefix, uri)
+        
+        # Find all lanes in the process
+        lanes = root.findall('.//bpmn:lane', namespaces)
+        
+        # Find the BPMNPlane element
+        bpmn_plane = root.find('.//bpmndi:BPMNPlane', namespaces)
+        
+        if bpmn_plane is None:
+            print("Warning: BPMNPlane not found in the document")
+            return tree
+        
+        for lane in lanes:
+            lane_id = lane.get('id')
+            lane_name = lane.get('name', '')
+            
+            # Get all flowNodeRef elements (references to elements in the lane)
+            flow_node_refs = lane.findall('bpmn:flowNodeRef', namespaces)
+            
+            if not flow_node_refs:
+                print(f"Warning: Lane {lane_id} has no flow nodes")
+                continue
+            
+            # Collect bounds of all elements in the lane
+            min_x = float('inf')
+            min_y = float('inf')
+            max_x = float('-inf')
+            max_y = float('-inf')
+            
+            for flow_node_ref in flow_node_refs:
+                element_id = flow_node_ref.text
+                
+                # Find the corresponding shape in the diagram
+                shape = bpmn_plane.find(f".//bpmndi:BPMNShape[@bpmnElement='{element_id}']", namespaces)
+                
+                if shape is not None:
+                    bounds = shape.find('dc:Bounds', namespaces)
+                    if bounds is not None:
+                        x = float(bounds.get('x', 0))
+                        y = float(bounds.get('y', 0))
+                        width = float(bounds.get('width', 0))
+                        height = float(bounds.get('height', 0))
+                        
+                        # Update min/max values
+                        min_x = min(min_x, x)
+                        min_y = min(min_y, y)
+                        max_x = max(max_x, x + width)
+                        max_y = max(max_y, y + height)
+            
+            # Check if we found any valid bounds
+            if min_x == float('inf'):
+                print(f"Warning: No valid bounds found for lane {lane_id}")
+                continue
+            
+            # Calculate lane dimensions
+            height_sum = max_y - min_y
+            width_sum = max_x - min_x  # Fixed: was max_x - max_y
+            
+            lane_x = min_x - 60
+            lane_y = min_y - 60
+            lane_width = width_sum + 120
+            lane_height = height_sum + 120
+            
+            # Check if lane shape already exists
+            existing_shape = bpmn_plane.find(f".//bpmndi:BPMNShape[@bpmnElement='{lane_id}']", namespaces)
+            
+            if existing_shape is not None:
+                # Update existing shape
+                bounds = existing_shape.find('dc:Bounds', namespaces)
+                if bounds is not None:
+                    bounds.set('x', str(lane_x))
+                    bounds.set('y', str(lane_y))
+                    bounds.set('width', str(lane_width))
+                    bounds.set('height', str(lane_height))
+                print(f"Updated lane diagram for: {lane_id}")
+            else:
+                # Create new lane shape element
+                lane_shape = ET.Element(f'{{{namespaces["bpmndi"]}}}BPMNShape')
+                lane_shape.set('id', f'{lane_id}_di')
+                lane_shape.set('bpmnElement', lane_id)
+                lane_shape.set('isHorizontal', 'true')
+                
+                # Create bounds element
+                bounds = ET.SubElement(lane_shape, f'{{{namespaces["dc"]}}}Bounds')
+                bounds.set('x', str(lane_x))
+                bounds.set('y', str(lane_y))
+                bounds.set('width', str(lane_width))
+                bounds.set('height', str(lane_height))
+                
+                # Create label element
+                label = ET.SubElement(lane_shape, f'{{{namespaces["bpmndi"]}}}BPMNLabel')
+                
+                # Insert the lane shape at the beginning of BPMNPlane
+                bpmn_plane.insert(0, lane_shape)
+                
+                print(f"Added lane diagram for: {lane_id} (x={lane_x}, y={lane_y}, width={lane_width}, height={lane_height})")
+        
+        # # Save the modified XML
+        # if output_file_path is None:
+        #     output_file_path = single_lane_xml
+        
+        # tree.write(output_file_path, encoding='UTF-8', xml_declaration=True)
+        # print(f"\nModified XML saved to: {output_file_path}")
+        
+        return ET.tostring(root, encoding='unicode', xml_declaration=True)
+
+
+    def add_sequence_flows_from_json(self, single_lane_xml, sequence_flows_json):
+        """
+        Add sequence flows from JSON to a BPMN XML file.
+        
+        Args:
+            xml_file_path: Path to the input BPMN XML file
+            sequence_flows_json: Dictionary containing 'sequenceFlows' list
+            output_file_path: Path to save the modified XML (if None, overwrites input)
+        
+        Returns:
+            The modified XML tree
+        
+        Example JSON format:
+        {
+            'sequenceFlows': [
+                {
+                    'id': 'flow_9',
+                    'sourceRef': 'task_escalate_issue_1',
+                    'targetRef': 'task_investigate_critical_feedback_1'
+                }
+            ]
+        }
+        """
+        # Parse the XML file
+        # tree = ET.parse(xml_file_path)
+        tree = ET.ElementTree(ET.fromstring(single_lane_xml))
+        root = tree.getroot()
+        
+        # Define namespaces
+        namespaces = {
+            'bpmn': 'http://www.omg.org/spec/BPMN/20100524/MODEL',
+            'bpmndi': 'http://www.omg.org/spec/BPMN/20100524/DI',
+            'dc': 'http://www.omg.org/spec/DD/20100524/DC',
+            'di': 'http://www.omg.org/spec/DD/20100524/DI',
+            'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
+        }
+        
+        # Register namespaces to preserve prefixes
+        for prefix, uri in namespaces.items():
+            ET.register_namespace(prefix, uri)
+        
+        # Find the process and BPMNPlane elements
+        process = root.find('.//bpmn:process', namespaces)
+        bpmn_plane = root.find('.//bpmndi:BPMNPlane', namespaces)
+        
+        if process is None:
+            raise ValueError("Process element not found in BPMN file")
+        
+        if bpmn_plane is None:
+            raise ValueError("BPMNPlane element not found in BPMN file")
+        
+        # Get sequence flows from JSON
+        sequence_flows = sequence_flows_json.get('sequenceFlows', [])
+        
+        if not sequence_flows:
+            print("No sequence flows to add")
+            return tree
+        
+        print(f"Adding {len(sequence_flows)} sequence flow(s)...")
+        
+        for flow_data in sequence_flows:
+            flow_id = flow_data.get('id')
+            source_ref = flow_data.get('sourceRef')
+            target_ref = flow_data.get('targetRef')
+            
+            if not flow_id or not source_ref or not target_ref:
+                print(f"Warning: Skipping incomplete flow data: {flow_data}")
+                continue
+            
+            # Check if sequence flow already exists
+            existing_flow = process.find(f".//bpmn:sequenceFlow[@id='{flow_id}']", namespaces)
+            if existing_flow is not None:
+                print(f"Warning: Sequence flow {flow_id} already exists, skipping")
+                continue
+            
+            # Find source and target elements in the diagram
+            source_shape = bpmn_plane.find(
+                f".//bpmndi:BPMNShape[@bpmnElement='{source_ref}']",
+                namespaces
+            )
+            target_shape = bpmn_plane.find(
+                f".//bpmndi:BPMNShape[@bpmnElement='{target_ref}']",
+                namespaces
+            )
+            
+            if source_shape is None:
+                print(f"Warning: Source element {source_ref} not found in diagram, skipping flow {flow_id}")
+                continue
+            
+            if target_shape is None:
+                print(f"Warning: Target element {target_ref} not found in diagram, skipping flow {flow_id}")
+                continue
+            
+            # Get bounds of source and target
+            source_bounds = source_shape.find('dc:Bounds', namespaces)
+            target_bounds = target_shape.find('dc:Bounds', namespaces)
+            
+            if source_bounds is None or target_bounds is None:
+                print(f"Warning: Could not find bounds for flow {flow_id}, skipping")
+                continue
+            
+            # Extract coordinates
+            source_x = float(source_bounds.get('x', 0))
+            source_y = float(source_bounds.get('y', 0))
+            source_width = float(source_bounds.get('width', 0))
+            source_height = float(source_bounds.get('height', 0))
+            
+            target_x = float(target_bounds.get('x', 0))
+            target_y = float(target_bounds.get('y', 0))
+            target_width = float(target_bounds.get('width', 0))
+            target_height = float(target_bounds.get('height', 0))
+            
+            # Calculate waypoints
+            # waypoint_1_x = sourceRef_x + sourceRef_width / 2
+            # waypoint_2_x = targetRef_x + targetRef_width / 2
+            waypoint_1_x = round(source_x + source_width / 2)
+            waypoint_2_x = round(target_x + target_width / 2)
+            
+            # Determine waypoint y coordinates based on relative positions
+            if source_y < target_y:
+                # Source is above target
+                waypoint_1_y = round(source_y + source_height)
+                waypoint_2_y = round(target_y)
+            else:
+                # Source is below or at same level as target
+                waypoint_1_y = round(source_y)
+                waypoint_2_y = round(target_y + target_height)
+            
+            # Create sequence flow element in process
+            sequence_flow = ET.Element(f'{{{namespaces["bpmn"]}}}sequenceFlow')
+            sequence_flow.set('id', flow_id)
+            sequence_flow.set('sourceRef', source_ref)
+            sequence_flow.set('targetRef', target_ref)
+            
+            # Add sequence flow to process
+            process.append(sequence_flow)
+            
+            # Create BPMNEdge for diagram
+            bpmn_edge = ET.Element(f'{{{namespaces["bpmndi"]}}}BPMNEdge')
+            bpmn_edge.set('id', f'{flow_id}_di')
+            bpmn_edge.set('bpmnElement', flow_id)
+            
+            # Add first waypoint
+            waypoint_1 = ET.SubElement(bpmn_edge, f'{{{namespaces["di"]}}}waypoint')
+            waypoint_1.set('x', str(waypoint_1_x))
+            waypoint_1.set('y', str(waypoint_1_y))
+            
+            # Add second waypoint
+            waypoint_2 = ET.SubElement(bpmn_edge, f'{{{namespaces["di"]}}}waypoint')
+            waypoint_2.set('x', str(waypoint_2_x))
+            waypoint_2.set('y', str(waypoint_2_y))
+            
+            # Add edge to BPMNPlane
+            bpmn_plane.append(bpmn_edge)
+            
+            print(f"Added sequence flow: {flow_id}")
+            print(f"  {source_ref} ({waypoint_1_x}, {waypoint_1_y}) -> {target_ref} ({waypoint_2_x}, {waypoint_2_y})")
+        
+        # # Save the modified XML
+        # if output_file_path is None:
+        #     output_file_path = single_lane_xml
+        
+        # tree.write(output_file_path, encoding='UTF-8', xml_declaration=True)
+        # print(f"\nModified XML saved to: {output_file_path}")
+        
+        return ET.tostring(root, encoding='unicode', xml_declaration=True)
+    
+
+
