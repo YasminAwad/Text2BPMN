@@ -1,5 +1,7 @@
-from ..exceptions import BPMNValidationError
 import re
+
+from ..exceptions import BPMNValidationError
+
 
 class BPMNFileValidator:
     """Validates and cleans BPMN XML content."""

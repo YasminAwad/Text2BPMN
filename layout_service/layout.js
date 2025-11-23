@@ -1,7 +1,4 @@
-// layout_service/layout.js
 /**
- * BPMN Auto-Layout Script
- * 
  * Reads BPMN XML from stdin, applies auto-layout, writes to stdout.
  * 
  * Usage:
@@ -12,7 +9,6 @@
 const fs = require('fs');
 const { layoutProcess } = require('bpmn-auto-layout');
 
-// Read input from stdin
 let inputXml = '';
 
 process.stdin.setEncoding('utf8');
@@ -32,7 +28,6 @@ process.stdin.on('end', async () => {
     // Apply auto-layout
     const layoutedXml = await layoutProcess(inputXml);
 
-    // Write to stdout
     process.stdout.write(layoutedXml);
     process.exit(0);
 
@@ -42,7 +37,6 @@ process.stdin.on('end', async () => {
   }
 });
 
-// Handle errors
 process.on('uncaughtException', (error) => {
   console.error('Uncaught exception:', error.message);
   process.exit(1);

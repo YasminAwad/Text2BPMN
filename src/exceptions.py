@@ -1,35 +1,32 @@
-class BPMNGeneratorError(Exception):
-    """Base exception for all BPMN Generator errors."""
-    pass
-
-class BPMNGenerationError(BPMNGeneratorError):
+class BPMNGenerationError(Exception):
     """Raised when BPMN generation fails."""
     pass
 
-class BPMNValidationError(BPMNGeneratorError):
+class BPMNValidationError(BPMNGenerationError):
     """Raised when BPMN validation fails."""
     pass
 
-class FileHandlerError(BPMNGeneratorError):
+class FileHandlerError(BPMNGenerationError):
     """Raised when file operations fail."""
     pass
 
-class ConfigError(BPMNGeneratorError):
-    """Raised when configuration is invalid."""
-    pass
-
-class LLMError(BPMNGeneratorError):
+class LLMServiceError(BPMNGenerationError):
     """Raised when LLM operations fail."""
     pass
 
+class DiagramError(BPMNGenerationError):
+    """Raised when merging BPMN files fails."""
+    pass
+
+class BPMNLayoutError(DiagramError):
+    """Raised when BPMN auto-layout fails."""
+    pass
+
+# TODO: Add more specific exceptions
+# class AddLaneDiagramError(DiagramError):
+# class MergeBPMNFilesError(DiagramError):
+# etc.
+
 class ConfigurationError(Exception):
     """Raised when configuration is invalid or missing."""
-    pass
-
-class FileHandlerError(Exception):
-    """Raised when file operations fail."""
-    pass
-
-class BPMNLayoutError(BPMNGeneratorError):
-    """Raised when BPMN auto-layout fails."""
     pass

@@ -1,8 +1,3 @@
-"""
-CLI interface module for BPMN Generator using Click.
-Handles command-line interface and console output formatting.
-"""
-
 import sys
 import click
 import logging
@@ -72,8 +67,6 @@ def cli(description: Optional[str], file: Optional[str], output: str):
       text2bpmn --file process.txt
       text2bpmn --file process.md --output diagram.bpmn
     """    
-    
-    # Validate that either description or file is provided
     if not file and not description:
         click.echo(click.get_current_context().get_help())
         click.echo(click.style("\nError: Please provide either a description or use --file option.", 
@@ -81,26 +74,20 @@ def cli(description: Optional[str], file: Optional[str], output: str):
         sys.exit(1)
     
     try:
+        logging.info("Initializing services...")
         settings = config.load_settings()
         config.setup_logging(settings)
 
-        logging.info("Setup started.")
-
         api_key = config.get_api_key(settings)
-        logging.info("Api key done")
         llm_config = config.get_model_config(settings)
-        logging.info("Model config done")
 
-        process_description = read_process_description(description, file)
-        logging.info("Process description read.")
-        
-        logging.info("Setup complete.")
-
-        display_header()
-        
         llm_service = LLMService(api_key, llm_config)
         bpmn_service = BPMNGeneratorService(llm_service)
         logging.info("Services initialized.")
+
+        process_description = read_process_description(description, file)
+
+        display_header()
         
         click.echo(click.style("\n⚙️  Generating BPMN diagram...", fg="white"))
         bpmn_xml, reasoning = bpmn_service.generate_bpmn(process_description)
@@ -108,6 +95,8 @@ def cli(description: Optional[str], file: Optional[str], output: str):
         logging.info("BPMN diagram generated.")
         
         display_footer(output, reasoning)
+
+        logging.info("Process completed.")
         
     except KeyboardInterrupt:
         click.echo(click.style("\n\n⚠️  Process interrupted by user.", fg="yellow"), err=True)
