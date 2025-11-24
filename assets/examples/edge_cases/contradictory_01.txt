@@ -1,0 +1,1 @@
+Explain the process where the manager must always approve the request, except when no approval is needed.

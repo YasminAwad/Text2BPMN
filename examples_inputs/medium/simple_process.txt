@@ -1,4 +1,0 @@
-User logs into the system.
-System validates credentials.
-If credentials are valid, redirect to dashboard.
-If credentials are invalid, show error message and allow retry.

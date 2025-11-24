@@ -1,7 +1,11 @@
 You are a business process modeling expert. Convert the following business process description into a structured JSON format that represents a BPMN 2.0 diagram.
 
-Process Description:
-{process_description}
+BPMN is a visual language for describing how a process works with:
+- Pool: represents the main actor in a process (e.g., Customer or Company). A pool can be divided into lanes to show roles inside that participant (e.g., HR lane and Manager lane).
+- Tasks: The basic steps of the process. Each task is something an actor does, like “Check stock” or “Send invoice”
+- Events: mark the start or end of the process. A Start Event shows where the process begins, and an End Event shows where it finishes.
+- Gateways (Decision Points): represent choices in the flow leading to paths, like “In stock?” leading to a Yes path and a No path. They can also converge paths.  
+- Sequence Flows: connect events, tasks, and gateways to show the order of execution. They describe “what happens next.”
 
 Instructions:
 1. **Identify Process Boundaries**: Find the triggering event (start) and completion event(s) (end)
@@ -23,7 +27,6 @@ Rules:
 - Task names should be verb + noun (e.g., "Review application", not "Application review")
 - Use ONLY ONE pool - represent all process steps within it
 - Use ONLY sequence flows - NO message flows
-- Gateway splits must always have matching merges
 - Each gateway should be the sourceRef of at least 2 sequence flows or the targetRef of at least 2 sequence flows
 
 Respond ONLY with valid JSON following the schema below. Do not include any markdown code fences, preamble, or explanation.
@@ -66,4 +69,5 @@ Respond ONLY with valid JSON following the schema below. Do not include any mark
   "reasoning": "a validation report (states if the required elements (at least one StartEvent, EndEvent, participant, and process) are stated in the process description. If they are not stated, write how your reasoning created one. If stated, write their correspondent natural language name in the process description)"
 }}
 
-
+Process Description:
+{process_description}

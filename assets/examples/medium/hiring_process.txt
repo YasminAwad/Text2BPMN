@@ -1,0 +1,10 @@
+Candidate submits an online application for a software engineer position.
+The system checks the application for completeness.
+If required documents are missing, notify the candidate to upload them.
+If the application is complete, forward it to HR screening.
+HR reviews skills and experience and decides if the candidate should proceed.
+If HR approves, schedule a first-round interview with the engineering team.
+If candidate passes, schedule a technical assessment.
+If the candidate passes the assessment, arrange a final interview with the CTO.
+Candidate receives updates after each stage.
+If candidate fails at any stage, notify them and close the application.
