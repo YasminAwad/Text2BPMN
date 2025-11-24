@@ -1,13 +1,12 @@
 import copy
 import logging
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from ..exceptions import BPMNGenerationError, DiagramError
 from .layout import BPMNLayoutService
 
-
-class BPMNDiagramHelper:
+class BPMNMerger:
     """Class to handle merging multiple BPMN lane files into one."""
     
     def __init__(self):
@@ -77,7 +76,7 @@ class BPMNDiagramHelper:
 
         return complete_xml
     
-    def add_lane_shape(self, single_lane_xml):
+    def add_lane_shape(self, single_lane_xml: str):
         """
         Add lane shape information to a BPMN XML file.
         """

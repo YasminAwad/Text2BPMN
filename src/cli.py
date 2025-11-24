@@ -41,7 +41,7 @@ def print_info(message: str) -> None:
 @click.command()
 @click.argument('description', required=False)
 @click.option(
-    '-f', '--file',
+    '-f', '--file', 
     type=click.Path(exists=True, dir_okay=False, readable=True),
     help='Path to text/markdown file containing process description'
 )
@@ -74,7 +74,8 @@ def cli(description: Optional[str], file: Optional[str], output: str):
         sys.exit(1)
     
     try:
-        logging.info("Initializing services...")
+        display_header()
+
         settings = config.load_settings()
         config.setup_logging(settings)
 
@@ -86,8 +87,6 @@ def cli(description: Optional[str], file: Optional[str], output: str):
         logging.info("Services initialized.")
 
         process_description = read_process_description(description, file)
-
-        display_header()
         
         click.echo(click.style("\n⚙️  Generating BPMN diagram...", fg="white"))
         bpmn_xml, reasoning = bpmn_service.generate_bpmn(process_description)

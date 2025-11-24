@@ -1,4 +1,5 @@
 import re
+import logging
 
 from ..exceptions import BPMNValidationError
 
@@ -43,3 +44,21 @@ class XMLValidator:
         # Basic XML structure check
         if xml.count('<') != xml.count('>'):
             raise BPMNValidationError("Malformed XML: Unbalanced tags detected")
+
+    @staticmethod
+    def remove_file_wrapper(llm_xml: str) -> str:
+        lane_xml_file_match = re.search(r"<file>(.*?)</file>", llm_xml, re.DOTALL)
+        if not lane_xml_file_match:
+            logging.error("The response does not contain a valid xml BPMN file.")
+            raise BPMNValidationError("Failed to generate BPMN file.")
+        lane_raw_xml = lane_xml_file_match.group(1).strip()
+        return lane_raw_xml
+    
+    @staticmethod
+    def validate_and_clean(xml: str) -> str:
+        """
+        Validate and clean BPMN XML content.
+        """
+        xml = XMLValidator.clean_xml(xml)
+        XMLValidator.validate(xml)
+        return xml

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from .llm import LLMService
-from .merger import BPMNDiagramHelper
+from .merger import BPMNMerger
 from .validator import XMLValidator
 from ..exceptions import BPMNGenerationError
 
@@ -15,8 +15,7 @@ class BPMNGeneratorService:
         """Main service orchestrating BPMN generation pipeline."""
         
         self.llm_service = llm_service
-        self.validator = XMLValidator()
-        self.merger = BPMNDiagramHelper()
+        self.merger = BPMNMerger()
 
     def generate_bpmn(self, process_description: str) -> str:
         """
@@ -73,9 +72,9 @@ class BPMNGeneratorService:
                 lane_xml = self.llm_service.call_llm("02_generate_little_xml.txt",
                                                      {"json_lane": json_lane_process})
                 
-                lane_raw_xml = self._get_xml(lane_xml)
-                cleaned_lane_xml = self.validator.clean_xml(lane_raw_xml)
-                self.validator.validate(cleaned_lane_xml)
+                lane_raw_xml = XMLValidator.remove_file_wrapper(lane_xml)
+                cleaned_lane_xml = XMLValidator.clean_xml(lane_raw_xml)
+                XMLValidator.validate(cleaned_lane_xml)
 
                 xml_lanes_list.append(cleaned_lane_xml)
 
@@ -152,14 +151,6 @@ class BPMNGeneratorService:
         logging.debug("Different flow:\n%s", different_flow)
 
         return same_flow, different_flow
-
-    def _get_xml(self, llm_xml: Dict) -> str:
-        lane_xml_file_match = re.search(r"<file>(.*?)</file>", llm_xml, re.DOTALL)
-        if not lane_xml_file_match:
-            logging.error("The response does not contain a valid xml BPMN file.")
-            raise BPMNGenerationError("Failed to generate BPMN file.")
-        lane_raw_xml = lane_xml_file_match.group(1).strip()
-        return lane_raw_xml
     
     def _extract_all_lanes(self, json_bpmn: Dict, same_flow: Dict) -> List[Dict]:
         """

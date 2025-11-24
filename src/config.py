@@ -53,7 +53,7 @@ def setup_logging(settings: Settings):
     
     logging.basicConfig(
         filename=LOG_FILE,
-        filemode="w", #a
+        filemode="a",
         level=level,
         format=LOG_FORMAT
     )

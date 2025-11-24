@@ -84,13 +84,6 @@ class BPMNLayoutService:
             
             layouted_xml = result.stdout
             
-            # Validate output
-            if not layouted_xml or len(layouted_xml) < len(bpmn_xml) * 0.8:
-                logging.error("Layout output is suspiciously small")
-                raise BPMNLayoutError("Auto-layout produced invalid output")
-            
-            logging.info("Auto-layout applied successfully")
-            
             return layouted_xml
             
         except subprocess.TimeoutExpired:
