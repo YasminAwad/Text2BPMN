@@ -160,8 +160,8 @@ Note that the process contains a pool that is divided in a list of lanes, and a 
     - add intra-lane sequence flows 
     - add of mock start and end events if not present 
 
-**Why mock start/end events?**
-They ensure each lane has proper entry/exit points for layout purposes, making the bpm-auto-layout service work correctly.
+    **Why mock start/end events?**
+    They ensure each lane has proper entry/exit points for layout purposes, making the bpm-auto-layout service work correctly.
 
 #### Step 3: Generate Lane XMLs
 For each lane:
@@ -194,7 +194,7 @@ My experimentation path focused on understanding BPMN structure, XML semantics, 
 ### Experiment 1 — Baseline Direct XML Generation
 
 **Approach**:
-* Prompt LLM directly with BPMN general rules + process description to generate a BPMN XML file.
+* Prompt LLM directly with BPMN general rules + process description to generate a BPMN XML file
 * Added XML validation of the output in order to obtain BPMN 
 
 **Results**: 
@@ -261,18 +261,14 @@ To ensure a correct LLM generation of xml lanes, it helped a lot instructing the
 
 ### Rejected Approaches
 
-**Preprocessing step**
+- **Preprocessing step**
+  Attempted to have the LLM reformulate the process description for clarity. This degraded results rather than improving them. I discarded multi-step preprocessing approaches.
 
-I kept the validation report reasoning about the process description in the first LLM request—the one generating the JSON—because it's the only point where the model has full access to both the user’s description and its own reasoning for creating the BPMN.
+- **Iterative refinement**
+  Asking the LLM to review and fix its own XML output did not yield improvements.
 
-**Preprocessing step**
-Attempted to have the LLM reformulate the process description for clarity. This degraded results rather than improving them. I discarded multi-step preprocessing approaches.
-
-**Iterative refinement**
-Asking the LLM to review and fix its own XML output did not yield improvements.
-
-**Parameter tuning**
-Changing temperature or other parameters had minimal impact, so I used a single, fixed LLM configuration for all requests.
+- **Parameter tuning**
+  Changing temperature or other parameters had minimal impact, so I used a single, fixed LLM configuration for all requests.
 
 
 ## Evaluation (how I checked quality)
@@ -295,7 +291,7 @@ BPMN diagram quality is difficult to quantify programmatically, especially the v
 
 I eveluated in a non-quantitative way:
 
-**Visual inspection**: Manually reviewed generated diagrams against various teset inputs. Overlapping elments or lanes were considered critical failures.
+**Visual inspection**: Manually reviewed generated diagrams against various test inputs (short, medium, long). Overlapping elments or lanes were considered critical failures.
 
 **Informal user testing**: Showed results to colleagues unfamiliar with the project to gauge comprehension.
 
@@ -377,7 +373,7 @@ Diagram:
 ### Proposed Next Steps
 
 * Clean up mock artifacts
-    Remove orphaned sequence flows when deleting mock events
+* Remove orphaned sequence flows when deleting mock events
 * Expand tests and review Exceptions flow
 * Strengthen validation rules (deeper BPMN XML rule checking)
 * Provide more/better examples to LLM for both JSON and XML generation
