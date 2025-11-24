@@ -47,6 +47,9 @@ class XMLValidator:
 
     @staticmethod
     def remove_file_wrapper(llm_xml: str) -> str:
+        """
+        Remove <file> tag wrapper from a xml string.
+        """
         lane_xml_file_match = re.search(r"<file>(.*?)</file>", llm_xml, re.DOTALL)
         if not lane_xml_file_match:
             logging.error("The response does not contain a valid xml BPMN file.")
