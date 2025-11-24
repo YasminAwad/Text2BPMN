@@ -8,18 +8,19 @@ A proof-of-concept command-line tool that converts natural-language process desc
 - Python 3.x
 - Node.js
 
-### Installation
+### Installation on Linux
 
 1. Enter the project folder
 2. Create a Python virtual environment:
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv/bin/activate  
    ```
-3. Install the cli tool (and it's dependencies):
+3. Install the cli tool (and it's dependencies) in develop mode:
    ```bash
-   pip install .
+   pip install -e .
    ```
+4. Create a `.env` file following the `.env.example` structure
 
 ### Project Structure
 
