@@ -4,10 +4,9 @@ import pathlib
 import pytest
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
-EXAMPLES_DIR = BASE_DIR / "examples_inputs"
+EXAMPLES_DIR = BASE_DIR / "assets" / "examples"
 OUTPUT_DIR = BASE_DIR / "output"
 
-# Ensure output folder exists
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 
@@ -23,37 +22,29 @@ def get_all_input_files():
                     files.append(f)
     return files
 
-
 @pytest.mark.parametrize("input_file", get_all_input_files())
 def test_generate_bpmn_from_examples(input_file):
     """
-    Integration test:
     - Runs the CLI tool with each example input file
-    - Saves BPMN + reasoning in the output/ folder
+    - Saves BPMN + reasoning in the output preserving input subfolder structure
     """
+    relative_path = input_file.relative_to(EXAMPLES_DIR)
+    output_subfolder = OUTPUT_DIR / relative_path.parent
+    output_subfolder.mkdir(parents=True, exist_ok=True)
 
-    # Name of generated files
     name = input_file.stem
-    out_bpmn = OUTPUT_DIR / f"{name}.bpmn"
-    out_reasoning = OUTPUT_DIR / f"{name}_reasoning.txt"
+    out_bpmn = output_subfolder / f"{name}.bpmn"
+    out_reasoning = output_subfolder / f"{name}_reasoning.txt"
 
-    # CLI command
     cmd = [
-    "text2bpmn",  # <-- the console script from setup.py
+    "text2bpmn",
     "--file",
     str(input_file),
     "--output",
     str(out_bpmn)
     ]
 
-
-
-    # Run CLI
     result = subprocess.run(cmd, capture_output=True, text=True)
-
-    # Print stdout/stderr for debugging if needed
-    print(result.stdout)
-    print(result.stderr)
 
     # Assert CLI ran successfully
     assert result.returncode == 0, f"CLI failed for {input_file.name}"
@@ -62,20 +53,14 @@ def test_generate_bpmn_from_examples(input_file):
     assert out_bpmn.exists(), f"Missing BPMN output: {out_bpmn}"
 
     # Extract Reasoning from the CLI output and save it
-    # The CLI prints reasoning after "📜 Reasoning Report:"
     reasoning_text = extract_reasoning_from_output(result.stdout)
-    print("Reasoning:")
-    print(reasoning_text)
-
     out_reasoning.write_text(reasoning_text, encoding="utf-8")
-
     assert out_reasoning.exists(), f"Missing reasoning file: {out_reasoning}"
 
 
 def extract_reasoning_from_output(output: str) -> str:
     """
     Extract reasoning from CLI output.
-    
     Looks for "📜 Reasoning Report:" section in the output.
     """
     lines = output.split('\n')
