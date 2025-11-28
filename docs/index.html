@@ -1,12 +1,118 @@
 <!DOCTYPE html>
-<html>
-  <body>
-    <h1>My Presentation</h1>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Presentation</title>
 
-    <embed src="slides.pdf" type="application/pdf" width="100%" height="800px" />
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 40px 0;
+      text-align: center;
+      color: #1b2a4a;
+    }
 
-    <p>
-      <a href="Text2BPMN-slides.pdf" download>Download PDF</a>
-    </p>
-  </body>
+    h1 {
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #1a3d7c;
+    }
+
+    .carousel-container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .slide {
+      width: 100%;
+      max-height: 700px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #1a3d7c;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #254f9a;
+    }
+
+    .indicator {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #1b2a4a;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Project Presentation</h1>
+
+  <div class="carousel-container">
+    <img class="slide" id="slide" src="Text2BPMN-slides/slide1.jpg" alt="Slide">
+
+    <div class="controls">
+      <button onclick="prevSlide()">← Previous</button>
+      <button onclick="nextSlide()">Next →</button>
+    </div>
+
+    <div class="indicator" id="indicator">Slide 1 of 51</div>
+  </div>
+
+  <script>
+    // Folder where slides are located
+    const folder = "Text2BPMN-slides";
+
+    // Auto-generate slide filenames inside folder
+    const slides = Array.from({ length: 51 }, (_, i) => 
+      `${folder}/slide${i + 1}.jpg`
+    );
+
+    let index = 0;
+
+    function updateSlide() {
+      document.getElementById("slide").src = slides[index];
+      document.getElementById("indicator").textContent = 
+        `Slide ${index + 1} of ${slides.length}`;
+    }
+
+    function prevSlide() {
+      index = (index - 1 + slides.length) % slides.length;
+      updateSlide();
+    }
+
+    function nextSlide() {
+      index = (index + 1) % slides.length;
+      updateSlide();
+    }
+
+    // Keyboard support
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") prevSlide();
+      if (event.key === "ArrowRight") nextSlide();
+    });
+  </script>
+</body>
 </html>
