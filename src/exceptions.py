@@ -2,6 +2,10 @@ class BPMNGenerationError(Exception):
     """Raised when BPMN generation fails."""
     pass
 
+class BPMNJsonError(BPMNGenerationError):
+    """Raised when BPMN JSON is invalid or malformed."""
+    pass
+
 class BPMNValidationError(BPMNGenerationError):
     """Raised when BPMN validation fails."""
     pass

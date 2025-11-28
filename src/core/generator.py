@@ -3,11 +3,13 @@ import logging
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple
+from pydantic import ValidationError
 
 from .llm import LLMService
 from .merger import BPMNMerger
 from .validator import XMLValidator
-from ..exceptions import BPMNGenerationError
+from ..utils.models import BPMNResponse
+from ..exceptions import BPMNGenerationError, BPMNJsonError
 
 
 class BPMNGeneratorService:
@@ -37,6 +39,7 @@ class BPMNGeneratorService:
                                                      {"process_description": process_description})
             
             json_loaded =json.loads(json_content)
+            self._validate_bpmn_json(json_loaded)
 
             json_bpmn = json_loaded["bpmn"]
             reasoning = json_loaded["reasoning"]
@@ -222,3 +225,22 @@ class BPMNGeneratorService:
             lane["sequenceFlows"] = []
         lane["sequenceFlows"].extend(flows_for_lane)
         
+
+    # Usage example
+    def _validate_bpmn_json(json_content: dict) -> BPMNResponse:
+        """
+        Validates and parses BPMN JSON content.
+        
+        Args:
+            json_content: Dictionary containing the BPMN structure
+            
+        Returns:
+            Validated BPMNResponse object
+            
+        Raises:
+            ValidationError: If the JSON doesn't match the expected structure
+        """
+        try:
+            return BPMNResponse(**json_content)
+        except ValidationError as e:
+            raise BPMNJsonError(f"Invalid BPMN JSON structure: {e}") from e
