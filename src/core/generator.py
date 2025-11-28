@@ -73,8 +73,7 @@ class BPMNGeneratorService:
                                                      {"json_lane": json_lane_process})
                 
                 lane_raw_xml = XMLValidator.remove_file_wrapper(lane_xml)
-                cleaned_lane_xml = XMLValidator.clean_xml(lane_raw_xml)
-                XMLValidator.validate(cleaned_lane_xml)
+                cleaned_lane_xml = XMLValidator.clean_and_validate(lane_raw_xml)
 
                 xml_lanes_list.append(cleaned_lane_xml)
 

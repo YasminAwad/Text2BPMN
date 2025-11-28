@@ -58,7 +58,7 @@ class XMLValidator:
         return lane_raw_xml
     
     @staticmethod
-    def validate_and_clean(xml: str) -> str:
+    def clean_and_validate(xml: str) -> str:
         """
         Validate and clean BPMN XML content.
         """

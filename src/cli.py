@@ -47,11 +47,12 @@ def print_info(message: str) -> None:
 )
 @click.option(
     '-o', '--output',
-    default='process_diagram.bpmn',
+    default='./output/process_diagram.bpmn',
     type=click.Path(dir_okay=False, writable=True),
     help='Output BPMN file path (default: process_diagram.bpmn)',
     show_default=True
 )
+# automatically adds a --version flag to your CLI application
 @click.version_option(version='1.0.0', prog_name='💡Text2BPMN')
 @click.help_option('-h', '--help')
 def cli(description: Optional[str], file: Optional[str], output: str):

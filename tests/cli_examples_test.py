@@ -17,6 +17,7 @@ def get_all_input_files():
     files = []
     for folder in EXAMPLES_DIR.iterdir():
         if folder.is_dir():
+            # Recursively finds all files in the folder and its subdirectories (**/* means "any file at any depth")
             for f in folder.glob("**/*"):
                 if f.suffix.lower() in {".txt", ".md"}:
                     files.append(f)
