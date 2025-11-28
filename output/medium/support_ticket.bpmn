@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Support Team" processRef="customer_support_ticket_process" /></bpmn:collaboration><bpmn:process id="customer_support_ticket_process" name="Customer Support Ticket Process" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_system_1" name="System">
+        <bpmn:flowNodeRef>startEvent_ticket_submission_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_assign_ticket_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_categorize_issue_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_severity_check_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_tier1_5" name="Tier 1 Support">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_assign_tier1_6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_review_troubleshoot_7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_tier1_resolution_8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_escalate_tier2_9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_tier2_10" name="Tier 2 Support">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_diagnostics_tier2_11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_tier2_fix_12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_technician_13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_tier3_14" name="Tier 3 Support">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_assign_tier3_15</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_diagnostics_tier3_16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_tier3_fix_17</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_customer_notification_18" name="Customer Notification">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_customer_update_19</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_customer_closure_20</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_customer_no_fix_21</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_ticket_closed_22</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_ticket_submission_1" name="Submit ticket">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_assign_ticket_2" name="Assign ticket number">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_categorize_issue_3" name="Categorize issue">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_severity_check_4" name="Check issue severity" gatewayDirection="diverging">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="startEvent_ticket_submission_1" targetRef="task_assign_ticket_2" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="task_assign_ticket_2" targetRef="task_categorize_issue_3" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="task_categorize_issue_3" targetRef="exclusiveGateway_severity_check_4" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="exclusiveGateway_severity_check_4" targetRef="mock_end_event" />
+  <bpmn:task id="task_assign_tier1_6" name="Assign to Tier 1">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_review_troubleshoot_7" name="Review and troubleshoot issue">
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:outgoing>flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_tier1_resolution_8" name="Issue resolved?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_10</bpmn:incoming>
+      <bpmn:outgoing>flow_11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_escalate_tier2_9" name="Escalate to Tier 2">
+      <bpmn:incoming>flow_11</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_6" sourceRef="task_assign_tier1_6" targetRef="task_review_troubleshoot_7" />
+    <bpmn:sequenceFlow id="flow_10" sourceRef="task_review_troubleshoot_7" targetRef="exclusiveGateway_tier1_resolution_8" />
+    <bpmn:sequenceFlow id="flow_11" sourceRef="exclusiveGateway_tier1_resolution_8" targetRef="task_escalate_tier2_9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${resolved == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_escalate_tier2_9" targetRef="mock_end_event" />
+  <bpmn:task id="task_diagnostics_tier2_11" name="Conduct diagnostics and implement solution">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_tier2_fix_12" name="Fix possible?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>flow_2a</bpmn:outgoing>
+      <bpmn:outgoing>flow_2b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_schedule_technician_13" name="Schedule on-site technician">
+      <bpmn:incoming>flow_2b</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="task_diagnostics_tier2_11" targetRef="exclusiveGateway_tier2_fix_12" />
+    <bpmn:sequenceFlow id="flow_2a" sourceRef="exclusiveGateway_tier2_fix_12" targetRef="mock_end_event">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Fix implemented</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_2b" sourceRef="exclusiveGateway_tier2_fix_12" targetRef="task_schedule_technician_13">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">On-site technician required</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_schedule_technician_13" targetRef="mock_end_event" />
+  <bpmn:task id="task_assign_tier3_15" name="Assign to Tier 3">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_19</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_diagnostics_tier3_16" name="Conduct diagnostics and implement solution">
+      <bpmn:incoming>flow_19</bpmn:incoming>
+      <bpmn:outgoing>flow_gateway_17</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_tier3_fix_17" name="Fix possible?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_gateway_17</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow_19" sourceRef="task_assign_tier3_15" targetRef="task_diagnostics_tier3_16" />
+    <bpmn:sequenceFlow id="flow_gateway_17" sourceRef="task_diagnostics_tier3_16" targetRef="exclusiveGateway_tier3_fix_17" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="exclusiveGateway_tier3_fix_17" targetRef="mock_end_event" />
+  <bpmn:task id="task_notify_customer_update_19" name="Notify customer of update" />
+    <bpmn:task id="task_notify_customer_closure_20" name="Notify customer and close ticket" />
+    <bpmn:task id="task_notify_customer_no_fix_21" name="Notify customer no fix possible" />
+    <bpmn:endEvent id="endEvent_ticket_closed_22" name="Ticket closed">
+      <bpmn:incoming>flow_10</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_10" sourceRef="task_notify_customer_closure_20" targetRef="endEvent_ticket_closed_22" />
+  <bpmn:sequenceFlow id="flow_4" sourceRef="exclusiveGateway_severity_check_4" targetRef="task_assign_tier1_6" /><bpmn:sequenceFlow id="flow_5" sourceRef="exclusiveGateway_severity_check_4" targetRef="task_assign_tier3_15" /><bpmn:sequenceFlow id="flow_7" sourceRef="task_review_troubleshoot_7" targetRef="task_notify_customer_update_19" /><bpmn:sequenceFlow id="flow_8" sourceRef="task_notify_customer_update_19" targetRef="exclusiveGateway_tier1_resolution_8" /><bpmn:sequenceFlow id="flow_9" sourceRef="exclusiveGateway_tier1_resolution_8" targetRef="task_notify_customer_closure_20" /><bpmn:sequenceFlow id="flow_12" sourceRef="task_escalate_tier2_9" targetRef="task_diagnostics_tier2_11" /><bpmn:sequenceFlow id="flow_13" sourceRef="task_diagnostics_tier2_11" targetRef="task_notify_customer_update_19" /><bpmn:sequenceFlow id="flow_14" sourceRef="task_notify_customer_update_19" targetRef="exclusiveGateway_tier2_fix_12" /><bpmn:sequenceFlow id="flow_15" sourceRef="exclusiveGateway_tier2_fix_12" targetRef="task_notify_customer_closure_20" /><bpmn:sequenceFlow id="flow_16" sourceRef="exclusiveGateway_tier2_fix_12" targetRef="task_notify_customer_no_fix_21" /><bpmn:sequenceFlow id="flow_17" sourceRef="task_notify_customer_no_fix_21" targetRef="task_schedule_technician_13" /><bpmn:sequenceFlow id="flow_20" sourceRef="task_diagnostics_tier3_16" targetRef="task_notify_customer_update_19" /><bpmn:sequenceFlow id="flow_21" sourceRef="task_notify_customer_update_19" targetRef="exclusiveGateway_tier3_fix_17" /><bpmn:sequenceFlow id="flow_22" sourceRef="exclusiveGateway_tier3_fix_17" targetRef="task_notify_customer_closure_20" /><bpmn:sequenceFlow id="flow_23" sourceRef="exclusiveGateway_tier3_fix_17" targetRef="task_notify_customer_no_fix_21" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_customer_support_ticket_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_customer_support_ticket_process" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="936" height="1538" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_system_1_di" bpmnElement="lane_system_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="906.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_ticket_submission_1_di" bpmnElement="startEvent_ticket_submission_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_assign_ticket_2_di" bpmnElement="task_assign_ticket_2">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_categorize_issue_3_di" bpmnElement="task_categorize_issue_3">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_severity_check_4_di" bpmnElement="exclusiveGateway_severity_check_4" isMarkerVisible="true">
+        <dc:Bounds x="500" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="500" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="550" y="70" />
+        <di:waypoint x="657" y="70" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_tier1_5_di" bpmnElement="lane_tier1_5" isHorizontal="true"><dc:Bounds x="-3.0" y="170.0" width="906.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_assign_tier1_6_di" bpmnElement="task_assign_tier1_6">
+        <dc:Bounds x="175.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_review_troubleshoot_7_di" bpmnElement="task_review_troubleshoot_7">
+        <dc:Bounds x="325.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_tier1_resolution_8_di" bpmnElement="exclusiveGateway_tier1_resolution_8" isMarkerVisible="true">
+        <dc:Bounds x="500.0" y="245.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_escalate_tier2_9_di" bpmnElement="task_escalate_tier2_9">
+        <dc:Bounds x="625.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="275.0" y="270.0" />
+        <di:waypoint x="325.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_10_di" bpmnElement="flow_10">
+        <di:waypoint x="425.0" y="270.0" />
+        <di:waypoint x="500.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_11_di" bpmnElement="flow_11">
+        <di:waypoint x="550.0" y="270.0" />
+        <di:waypoint x="625.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="725.0" y="270.0" />
+        <di:waypoint x="807.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_tier2_10_di" bpmnElement="lane_tier2_10" isHorizontal="true"><dc:Bounds x="-3.0" y="370.0" width="906.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_diagnostics_tier2_11_di" bpmnElement="task_diagnostics_tier2_11">
+        <dc:Bounds x="175.0" y="430.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_tier2_fix_12_di" bpmnElement="exclusiveGateway_tier2_fix_12" isMarkerVisible="true">
+        <dc:Bounds x="350.0" y="445.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_schedule_technician_13_di" bpmnElement="task_schedule_technician_13">
+        <dc:Bounds x="475.0" y="570.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="275.0" y="470.0" />
+        <di:waypoint x="350.0" y="470.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2a_di" bpmnElement="flow_2a">
+        <di:waypoint x="400.0" y="470.0" />
+        <di:waypoint x="657.0" y="470.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2b_di" bpmnElement="flow_2b">
+        <di:waypoint x="375.0" y="495.0" />
+        <di:waypoint x="375.0" y="610.0" />
+        <di:waypoint x="475.0" y="610.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="575.0" y="610.0" />
+        <di:waypoint x="675.0" y="610.0" />
+        <di:waypoint x="675.0" y="488.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_tier3_14_di" bpmnElement="lane_tier3_14" isHorizontal="true"><dc:Bounds x="-3.0" y="710.0" width="906.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_assign_tier3_15_di" bpmnElement="task_assign_tier3_15">
+        <dc:Bounds x="175.0" y="770.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_diagnostics_tier3_16_di" bpmnElement="task_diagnostics_tier3_16">
+        <dc:Bounds x="325.0" y="770.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_tier3_fix_17_di" bpmnElement="exclusiveGateway_tier3_fix_17" isMarkerVisible="true">
+        <dc:Bounds x="500.0" y="785.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_19_di" bpmnElement="flow_19">
+        <di:waypoint x="275.0" y="810.0" />
+        <di:waypoint x="325.0" y="810.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_17_di" bpmnElement="flow_gateway_17">
+        <di:waypoint x="425.0" y="810.0" />
+        <di:waypoint x="500.0" y="810.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="550.0" y="810.0" />
+        <di:waypoint x="657.0" y="810.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_customer_notification_18_di" bpmnElement="lane_customer_notification_18" isHorizontal="true"><dc:Bounds x="-3.0" y="910.0" width="906.0" height="598.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_notify_customer_update_19_di" bpmnElement="task_notify_customer_update_19">
+        <dc:Bounds x="57.0" y="1088.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_notify_customer_closure_20_di" bpmnElement="task_notify_customer_closure_20">
+        <dc:Bounds x="57.0" y="1228.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_notify_customer_no_fix_21_di" bpmnElement="task_notify_customer_no_fix_21">
+        <dc:Bounds x="57.0" y="1368.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4"><di:waypoint x="525" y="95" /><di:waypoint x="225" y="230" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5"><di:waypoint x="525" y="95" /><di:waypoint x="225" y="770" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7"><di:waypoint x="375" y="310" /><di:waypoint x="107" y="1088" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_8_di" bpmnElement="flow_8"><di:waypoint x="107" y="1088" /><di:waypoint x="525" y="295" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9"><di:waypoint x="525" y="295" /><di:waypoint x="107" y="1228" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_12_di" bpmnElement="flow_12"><di:waypoint x="675" y="310" /><di:waypoint x="225" y="430" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_13_di" bpmnElement="flow_13"><di:waypoint x="225" y="510" /><di:waypoint x="107" y="1088" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_14_di" bpmnElement="flow_14"><di:waypoint x="107" y="1088" /><di:waypoint x="375" y="495" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_15_di" bpmnElement="flow_15"><di:waypoint x="375" y="495" /><di:waypoint x="107" y="1228" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_16_di" bpmnElement="flow_16"><di:waypoint x="375" y="495" /><di:waypoint x="107" y="1368" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_17_di" bpmnElement="flow_17"><di:waypoint x="107" y="1368" /><di:waypoint x="525" y="650" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_20_di" bpmnElement="flow_20"><di:waypoint x="375" y="850" /><di:waypoint x="107" y="1088" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_21_di" bpmnElement="flow_21"><di:waypoint x="107" y="1088" /><di:waypoint x="525" y="835" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_22_di" bpmnElement="flow_22"><di:waypoint x="525" y="835" /><di:waypoint x="107" y="1228" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_23_di" bpmnElement="flow_23"><di:waypoint x="525" y="835" /><di:waypoint x="107" y="1368" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

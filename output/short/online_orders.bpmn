@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Company" processRef="handle_online_orders" /></bpmn:collaboration><bpmn:process id="handle_online_orders" name="Handle Online Orders" isExecutable="true">
+    <bpmn:laneSet id="laneSet_company_1">
+      <bpmn:lane id="lane_sales_1" name="Sales">
+        <bpmn:flowNodeRef>startEvent_order_received_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_check_stock_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_stock_available_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_process_order_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_out_of_stock_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_order_completed_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_order_failed_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_order_received_1" name="Receive order">
+      <bpmn:outgoing>seqFlow_start_check_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_check_stock_1" name="Check stock">
+      <bpmn:incoming>seqFlow_start_check_1</bpmn:incoming>
+      <bpmn:outgoing>seqFlow_check_gateway_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_stock_available_1" name="Stock available?" gatewayDirection="diverging">
+      <bpmn:incoming>seqFlow_check_gateway_1</bpmn:incoming>
+      <bpmn:outgoing>seqFlow_stock_yes_1</bpmn:outgoing>
+      <bpmn:outgoing>seqFlow_stock_no_1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_process_order_1" name="Process order">
+      <bpmn:incoming>seqFlow_stock_yes_1</bpmn:incoming>
+      <bpmn:outgoing>seqFlow_process_end_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_notify_out_of_stock_1" name="Notify customer out-of-stock">
+      <bpmn:incoming>seqFlow_stock_no_1</bpmn:incoming>
+      <bpmn:outgoing>seqFlow_notify_failed_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_order_completed_1" name="Order completed">
+      <bpmn:incoming>seqFlow_process_end_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="endEvent_order_failed_1" name="Order failed">
+      <bpmn:incoming>seqFlow_notify_failed_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="seqFlow_start_check_1" sourceRef="startEvent_order_received_1" targetRef="task_check_stock_1" />
+    <bpmn:sequenceFlow id="seqFlow_check_gateway_1" sourceRef="task_check_stock_1" targetRef="exclusiveGateway_stock_available_1" />
+    <bpmn:sequenceFlow id="seqFlow_stock_yes_1" sourceRef="exclusiveGateway_stock_available_1" targetRef="task_process_order_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">stock available</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="seqFlow_process_end_1" sourceRef="task_process_order_1" targetRef="endEvent_order_completed_1" />
+    <bpmn:sequenceFlow id="seqFlow_stock_no_1" sourceRef="exclusiveGateway_stock_available_1" targetRef="task_notify_out_of_stock_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">stock not available</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="seqFlow_notify_failed_1" sourceRef="task_notify_out_of_stock_1" targetRef="endEvent_order_failed_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_handle_online_orders">
+    <bpmndi:BPMNPlane id="BPMNPlane_handle_online_orders" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="786" height="340" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_sales_1_di" bpmnElement="lane_sales_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="756.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_order_received_1_di" bpmnElement="startEvent_order_received_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_check_stock_1_di" bpmnElement="task_check_stock_1">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_stock_available_1_di" bpmnElement="exclusiveGateway_stock_available_1" isMarkerVisible="true">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_process_order_1_di" bpmnElement="task_process_order_1">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_order_completed_1_di" bpmnElement="endEvent_order_completed_1">
+        <dc:Bounds x="657" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_notify_out_of_stock_1_di" bpmnElement="task_notify_out_of_stock_1">
+        <dc:Bounds x="475" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_order_failed_1_di" bpmnElement="endEvent_order_failed_1">
+        <dc:Bounds x="657" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="seqFlow_start_check_1_di" bpmnElement="seqFlow_start_check_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="seqFlow_check_gateway_1_di" bpmnElement="seqFlow_check_gateway_1">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="350" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="seqFlow_stock_yes_1_di" bpmnElement="seqFlow_stock_yes_1">
+        <di:waypoint x="400" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="seqFlow_stock_no_1_di" bpmnElement="seqFlow_stock_no_1">
+        <di:waypoint x="375" y="95" />
+        <di:waypoint x="375" y="210" />
+        <di:waypoint x="475" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="seqFlow_process_end_1_di" bpmnElement="seqFlow_process_end_1">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="657" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="seqFlow_notify_failed_1_di" bpmnElement="seqFlow_notify_failed_1">
+        <di:waypoint x="575" y="210" />
+        <di:waypoint x="657" y="210" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

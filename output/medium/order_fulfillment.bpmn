@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Order Fulfillment System" processRef="customer_online_order" /></bpmn:collaboration><bpmn:process id="customer_online_order" name="Customer Online Product Order" isExecutable="true">
+    <bpmn:laneSet id="laneSet_order_processing_1">
+      <bpmn:lane id="lane_order_processing_1" name="Order Processing">
+        <bpmn:flowNodeRef>startEvent_order_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_validate_payment_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_payment_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_payment_failed_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_request_new_payment_5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_payment_failed_6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_check_inventory_7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_inventory_8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_prepare_shipment_9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_send_to_warehouse_10</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_warehouse_2" name="Warehouse">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_package_items_11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_ship_to_customer_12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_customer_3" name="Customer">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_receive_tracking_13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_order_complete_14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_out_of_stock_15</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_offer_backorder_16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_backorder_17</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_order_1" name="Customer places order">
+      <bpmn:outgoing>flow_start_to_validate_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_validate_payment_2" name="Validate payment information">
+      <bpmn:incoming>flow_start_to_validate_1</bpmn:incoming>
+      <bpmn:outgoing>flow_validate_to_gateway_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_payment_3" name="Payment approved?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_validate_to_gateway_2</bpmn:incoming>
+      <bpmn:outgoing>flow_gateway_payment_approved_3</bpmn:outgoing>
+      <bpmn:outgoing>flow_gateway_payment_failed_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_notify_payment_failed_4" name="Notify customer payment failed">
+      <bpmn:incoming>flow_gateway_payment_failed_4</bpmn:incoming>
+      <bpmn:outgoing>flow_notify_payment_failed_to_request_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_request_new_payment_5" name="Request new payment method">
+      <bpmn:incoming>flow_notify_payment_failed_to_request_5</bpmn:incoming>
+      <bpmn:outgoing>flow_request_new_payment_to_end_failed_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_payment_failed_6" name="End after payment failed">
+      <bpmn:incoming>flow_request_new_payment_to_end_failed_6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="task_check_inventory_7" name="Check inventory availability">
+      <bpmn:incoming>flow_gateway_payment_approved_3</bpmn:incoming>
+      <bpmn:outgoing>flow_check_inventory_to_gateway_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_inventory_8" name="Items in stock?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_check_inventory_to_gateway_7</bpmn:incoming>
+      <bpmn:outgoing>flow_gateway_inventory_in_stock_8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_prepare_shipment_9" name="Prepare shipment">
+      <bpmn:incoming>flow_gateway_inventory_in_stock_8</bpmn:incoming>
+      <bpmn:outgoing>flow_prepare_shipment_to_send_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_send_to_warehouse_10" name="Send to warehouse">
+      <bpmn:incoming>flow_prepare_shipment_to_send_9</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_start_to_validate_1" sourceRef="startEvent_order_1" targetRef="task_validate_payment_2" />
+    <bpmn:sequenceFlow id="flow_validate_to_gateway_2" sourceRef="task_validate_payment_2" targetRef="exclusiveGateway_payment_3" />
+    <bpmn:sequenceFlow id="flow_gateway_payment_approved_3" sourceRef="exclusiveGateway_payment_3" targetRef="task_check_inventory_7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">payment approved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_gateway_payment_failed_4" sourceRef="exclusiveGateway_payment_3" targetRef="task_notify_payment_failed_4">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">payment failed</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_notify_payment_failed_to_request_5" sourceRef="task_notify_payment_failed_4" targetRef="task_request_new_payment_5" />
+    <bpmn:sequenceFlow id="flow_request_new_payment_to_end_failed_6" sourceRef="task_request_new_payment_5" targetRef="endEvent_payment_failed_6" />
+    <bpmn:sequenceFlow id="flow_check_inventory_to_gateway_7" sourceRef="task_check_inventory_7" targetRef="exclusiveGateway_inventory_8" />
+    <bpmn:sequenceFlow id="flow_gateway_inventory_in_stock_8" sourceRef="exclusiveGateway_inventory_8" targetRef="task_prepare_shipment_9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">items in stock</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_prepare_shipment_to_send_9" sourceRef="task_prepare_shipment_9" targetRef="task_send_to_warehouse_10" />
+  <bpmn:task id="task_package_items_11" name="Package items">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_package_to_ship_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_ship_to_customer_12" name="Ship to customer">
+      <bpmn:incoming>flow_package_to_ship_11</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_package_to_ship_11" sourceRef="task_package_items_11" targetRef="task_ship_to_customer_12" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_ship_to_customer_12" targetRef="mock_end_event" />
+  <bpmn:task id="task_receive_tracking_13" name="Receive tracking number">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_receive_tracking_to_end_complete_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_order_complete_14" name="Order complete">
+      <bpmn:incoming>flow_receive_tracking_to_end_complete_13</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="task_notify_out_of_stock_15" name="Notify customer out of stock">
+      <bpmn:outgoing>flow_notify_out_of_stock_to_offer_backorder_15</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_offer_backorder_16" name="Offer backorder option">
+      <bpmn:incoming>flow_notify_out_of_stock_to_offer_backorder_15</bpmn:incoming>
+      <bpmn:outgoing>flow_offer_backorder_to_end_backorder_16</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_backorder_17" name="End after backorder offered">
+      <bpmn:incoming>flow_offer_backorder_to_end_backorder_16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_receive_tracking_to_end_complete_13" sourceRef="task_receive_tracking_13" targetRef="endEvent_order_complete_14" />
+    <bpmn:sequenceFlow id="flow_notify_out_of_stock_to_offer_backorder_15" sourceRef="task_notify_out_of_stock_15" targetRef="task_offer_backorder_16" />
+    <bpmn:sequenceFlow id="flow_offer_backorder_to_end_backorder_16" sourceRef="task_offer_backorder_16" targetRef="endEvent_backorder_17" />
+  <bpmn:sequenceFlow id="flow_send_to_package_10" sourceRef="task_send_to_warehouse_10" targetRef="task_package_items_11" /><bpmn:sequenceFlow id="flow_ship_to_receive_tracking_12" sourceRef="task_ship_to_customer_12" targetRef="task_receive_tracking_13" /><bpmn:sequenceFlow id="flow_gateway_inventory_out_of_stock_14" sourceRef="exclusiveGateway_inventory_8" targetRef="task_notify_out_of_stock_15" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_customer_online_order">
+    <bpmndi:BPMNPlane id="BPMNPlane_customer_online_order" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="1118" height="880" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_order_processing_1_di" bpmnElement="lane_order_processing_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="1088.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_order_1_di" bpmnElement="startEvent_order_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_validate_payment_2_di" bpmnElement="task_validate_payment_2">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_payment_3_di" bpmnElement="exclusiveGateway_payment_3" isMarkerVisible="true">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_check_inventory_7_di" bpmnElement="task_check_inventory_7">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_inventory_8_di" bpmnElement="exclusiveGateway_inventory_8" isMarkerVisible="true">
+        <dc:Bounds x="650" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_prepare_shipment_9_di" bpmnElement="task_prepare_shipment_9">
+        <dc:Bounds x="775" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_send_to_warehouse_10_di" bpmnElement="task_send_to_warehouse_10">
+        <dc:Bounds x="925" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_notify_payment_failed_4_di" bpmnElement="task_notify_payment_failed_4">
+        <dc:Bounds x="475" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_request_new_payment_5_di" bpmnElement="task_request_new_payment_5">
+        <dc:Bounds x="625" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_payment_failed_6_di" bpmnElement="endEvent_payment_failed_6">
+        <dc:Bounds x="807" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_to_validate_1_di" bpmnElement="flow_start_to_validate_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_validate_to_gateway_2_di" bpmnElement="flow_validate_to_gateway_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="350" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_payment_approved_3_di" bpmnElement="flow_gateway_payment_approved_3">
+        <di:waypoint x="400" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_payment_failed_4_di" bpmnElement="flow_gateway_payment_failed_4">
+        <di:waypoint x="375" y="95" />
+        <di:waypoint x="375" y="210" />
+        <di:waypoint x="475" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_check_inventory_to_gateway_7_di" bpmnElement="flow_check_inventory_to_gateway_7">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="650" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_inventory_in_stock_8_di" bpmnElement="flow_gateway_inventory_in_stock_8">
+        <di:waypoint x="700" y="70" />
+        <di:waypoint x="775" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_prepare_shipment_to_send_9_di" bpmnElement="flow_prepare_shipment_to_send_9">
+        <di:waypoint x="875" y="70" />
+        <di:waypoint x="925" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_notify_payment_failed_to_request_5_di" bpmnElement="flow_notify_payment_failed_to_request_5">
+        <di:waypoint x="575" y="210" />
+        <di:waypoint x="625" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_request_new_payment_to_end_failed_6_di" bpmnElement="flow_request_new_payment_to_end_failed_6">
+        <di:waypoint x="725" y="210" />
+        <di:waypoint x="807" y="210" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_warehouse_2_di" bpmnElement="lane_warehouse_2" isHorizontal="true"><dc:Bounds x="-3.0" y="310.0" width="1088.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_package_items_11_di" bpmnElement="task_package_items_11">
+        <dc:Bounds x="175.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_ship_to_customer_12_di" bpmnElement="task_ship_to_customer_12">
+        <dc:Bounds x="325.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_package_to_ship_11_di" bpmnElement="flow_package_to_ship_11">
+        <di:waypoint x="275.0" y="410.0" />
+        <di:waypoint x="325.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="425.0" y="410.0" />
+        <di:waypoint x="507.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_customer_3_di" bpmnElement="lane_customer_3" isHorizontal="true"><dc:Bounds x="-3.0" y="510.0" width="1088.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_receive_tracking_13_di" bpmnElement="task_receive_tracking_13">
+        <dc:Bounds x="207.0" y="570.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_order_complete_14_di" bpmnElement="endEvent_order_complete_14">
+        <dc:Bounds x="389.0" y="592.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_notify_out_of_stock_15_di" bpmnElement="task_notify_out_of_stock_15">
+        <dc:Bounds x="57.0" y="710.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_offer_backorder_16_di" bpmnElement="task_offer_backorder_16">
+        <dc:Bounds x="207.0" y="710.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_backorder_17_di" bpmnElement="endEvent_backorder_17">
+        <dc:Bounds x="389.0" y="732.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_receive_tracking_to_end_complete_13_di" bpmnElement="flow_receive_tracking_to_end_complete_13">
+        <di:waypoint x="307.0" y="610.0" />
+        <di:waypoint x="389.0" y="610.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_notify_out_of_stock_to_offer_backorder_15_di" bpmnElement="flow_notify_out_of_stock_to_offer_backorder_15">
+        <di:waypoint x="157.0" y="750.0" />
+        <di:waypoint x="207.0" y="750.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_offer_backorder_to_end_backorder_16_di" bpmnElement="flow_offer_backorder_to_end_backorder_16">
+        <di:waypoint x="307.0" y="750.0" />
+        <di:waypoint x="389.0" y="750.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="flow_send_to_package_10_di" bpmnElement="flow_send_to_package_10"><di:waypoint x="975" y="110" /><di:waypoint x="225" y="370" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_ship_to_receive_tracking_12_di" bpmnElement="flow_ship_to_receive_tracking_12"><di:waypoint x="375" y="450" /><di:waypoint x="257" y="570" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_gateway_inventory_out_of_stock_14_di" bpmnElement="flow_gateway_inventory_out_of_stock_14"><di:waypoint x="675" y="95" /><di:waypoint x="107" y="710" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Customer" processRef="customer_product_return_process" /></bpmn:collaboration><bpmn:process id="customer_product_return_process" name="Customer Product Return Process" isExecutable="true">
+    <bpmn:laneSet id="laneSet_customer_1">
+      <bpmn:lane id="lane_customer_actions_1" name="Customer Actions">
+        <bpmn:flowNodeRef>startEvent_initiate_return_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_submit_return_request_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_pack_product_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_ship_product_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_return_accepted_5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_receive_refund_6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_return_completed_7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_return_rejected_8</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_initiate_return_1" name="Initiate return">
+      <bpmn:outgoing>flow_start_to_submit_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_submit_return_request_2" name="Submit return request">
+      <bpmn:incoming>flow_start_to_submit_1</bpmn:incoming>
+      <bpmn:outgoing>flow_submit_to_pack_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_pack_product_3" name="Pack product">
+      <bpmn:incoming>flow_submit_to_pack_2</bpmn:incoming>
+      <bpmn:outgoing>flow_pack_to_ship_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_ship_product_4" name="Ship product">
+      <bpmn:incoming>flow_pack_to_ship_3</bpmn:incoming>
+      <bpmn:outgoing>flow_ship_to_gateway_4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_return_accepted_5" name="Return accepted?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_ship_to_gateway_4</bpmn:incoming>
+      <bpmn:outgoing>flow_gateway_to_refund_5</bpmn:outgoing>
+      <bpmn:outgoing>flow_gateway_to_rejected_7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_receive_refund_6" name="Receive refund">
+      <bpmn:incoming>flow_gateway_to_refund_5</bpmn:incoming>
+      <bpmn:outgoing>flow_refund_to_end_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_return_completed_7" name="Return completed">
+      <bpmn:incoming>flow_refund_to_end_6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="endEvent_return_rejected_8" name="Return rejected">
+      <bpmn:incoming>flow_gateway_to_rejected_7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_start_to_submit_1" sourceRef="startEvent_initiate_return_1" targetRef="task_submit_return_request_2" />
+    <bpmn:sequenceFlow id="flow_submit_to_pack_2" sourceRef="task_submit_return_request_2" targetRef="task_pack_product_3" />
+    <bpmn:sequenceFlow id="flow_pack_to_ship_3" sourceRef="task_pack_product_3" targetRef="task_ship_product_4" />
+    <bpmn:sequenceFlow id="flow_ship_to_gateway_4" sourceRef="task_ship_product_4" targetRef="exclusiveGateway_return_accepted_5" />
+    <bpmn:sequenceFlow id="flow_gateway_to_refund_5" sourceRef="exclusiveGateway_return_accepted_5" targetRef="task_receive_refund_6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Return accepted</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_refund_to_end_6" sourceRef="task_receive_refund_6" targetRef="endEvent_return_completed_7" />
+    <bpmn:sequenceFlow id="flow_gateway_to_rejected_7" sourceRef="exclusiveGateway_return_accepted_5" targetRef="endEvent_return_rejected_8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Return not accepted</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_customer_product_return_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_customer_product_return_process" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="1086" height="318" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_customer_actions_1_di" bpmnElement="lane_customer_actions_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="1056.0" height="318.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_initiate_return_1_di" bpmnElement="startEvent_initiate_return_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_submit_return_request_2_di" bpmnElement="task_submit_return_request_2">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_pack_product_3_di" bpmnElement="task_pack_product_3">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_ship_product_4_di" bpmnElement="task_ship_product_4">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_return_accepted_5_di" bpmnElement="exclusiveGateway_return_accepted_5" isMarkerVisible="true">
+        <dc:Bounds x="650" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_receive_refund_6_di" bpmnElement="task_receive_refund_6">
+        <dc:Bounds x="775" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_return_completed_7_di" bpmnElement="endEvent_return_completed_7">
+        <dc:Bounds x="957" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_return_rejected_8_di" bpmnElement="endEvent_return_rejected_8">
+        <dc:Bounds x="807" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_to_submit_1_di" bpmnElement="flow_start_to_submit_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_submit_to_pack_2_di" bpmnElement="flow_submit_to_pack_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_pack_to_ship_3_di" bpmnElement="flow_pack_to_ship_3">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_ship_to_gateway_4_di" bpmnElement="flow_ship_to_gateway_4">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="650" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_to_refund_5_di" bpmnElement="flow_gateway_to_refund_5">
+        <di:waypoint x="700" y="70" />
+        <di:waypoint x="775" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_to_rejected_7_di" bpmnElement="flow_gateway_to_rejected_7">
+        <di:waypoint x="675" y="95" />
+        <di:waypoint x="675" y="210" />
+        <di:waypoint x="807" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_refund_to_end_6_di" bpmnElement="flow_refund_to_end_6">
+        <di:waypoint x="875" y="70" />
+        <di:waypoint x="957" y="70" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

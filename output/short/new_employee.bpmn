@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="HR Department" processRef="onboarding_remote_employee" /></bpmn:collaboration><bpmn:process id="onboarding_remote_employee" name="Onboard Remote Employee" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_hr_specialist_1" name="HR Specialist">
+        <bpmn:flowNodeRef>start_event_contract_signed_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_collect_employee_info_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_create_employee_account_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_send_welcome_email_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_it_support_1" name="IT Support">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_prepare_equipment_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_ship_equipment_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_training_coordinator_1" name="Training Coordinator">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_training_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_conduct_training_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_event_onboarding_complete_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="start_event_contract_signed_1" name="Contract Signed">
+      <bpmn:outgoing>flow_start_to_collect_info_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_collect_employee_info_1" name="Collect employee information">
+      <bpmn:incoming>flow_start_to_collect_info_1</bpmn:incoming>
+      <bpmn:outgoing>flow_collect_info_to_create_account_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_create_employee_account_1" name="Create employee account">
+      <bpmn:incoming>flow_collect_info_to_create_account_1</bpmn:incoming>
+      <bpmn:outgoing>flow_create_account_to_welcome_email_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_send_welcome_email_1" name="Send welcome email">
+      <bpmn:incoming>flow_create_account_to_welcome_email_1</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_start_to_collect_info_1" sourceRef="start_event_contract_signed_1" targetRef="task_collect_employee_info_1" />
+    <bpmn:sequenceFlow id="flow_collect_info_to_create_account_1" sourceRef="task_collect_employee_info_1" targetRef="task_create_employee_account_1" />
+    <bpmn:sequenceFlow id="flow_create_account_to_welcome_email_1" sourceRef="task_create_employee_account_1" targetRef="task_send_welcome_email_1" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_send_welcome_email_1" targetRef="mock_end_event" />
+  <bpmn:task id="task_prepare_equipment_1" name="Prepare equipment">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_prepare_equipment_to_ship_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_ship_equipment_1" name="Ship equipment">
+      <bpmn:incoming>flow_prepare_equipment_to_ship_1</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_prepare_equipment_to_ship_1" sourceRef="task_prepare_equipment_1" targetRef="task_ship_equipment_1" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_ship_equipment_1" targetRef="mock_end_event" />
+  <bpmn:task id="task_schedule_training_1" name="Schedule first-week training">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_schedule_training_to_conduct_training_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_conduct_training_1" name="Conduct first-week training">
+      <bpmn:incoming>flow_schedule_training_to_conduct_training_1</bpmn:incoming>
+      <bpmn:outgoing>flow_conduct_training_to_end_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="end_event_onboarding_complete_1" name="Onboarding Complete">
+      <bpmn:incoming>flow_conduct_training_to_end_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_schedule_training_to_conduct_training_1" sourceRef="task_schedule_training_1" targetRef="task_conduct_training_1" />
+    <bpmn:sequenceFlow id="flow_conduct_training_to_end_1" sourceRef="task_conduct_training_1" targetRef="end_event_onboarding_complete_1" />
+  <bpmn:sequenceFlow id="flow_welcome_email_to_prepare_equipment_1" sourceRef="task_send_welcome_email_1" targetRef="task_prepare_equipment_1" /><bpmn:sequenceFlow id="flow_ship_equipment_to_schedule_training_1" sourceRef="task_ship_equipment_1" targetRef="task_schedule_training_1" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_onboarding_remote_employee">
+    <bpmndi:BPMNPlane id="BPMNPlane_onboarding_remote_employee" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="786" height="600" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_hr_specialist_1_di" bpmnElement="lane_hr_specialist_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="756.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="start_event_contract_signed_1_di" bpmnElement="start_event_contract_signed_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_collect_employee_info_1_di" bpmnElement="task_collect_employee_info_1">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_create_employee_account_1_di" bpmnElement="task_create_employee_account_1">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_send_welcome_email_1_di" bpmnElement="task_send_welcome_email_1">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_to_collect_info_1_di" bpmnElement="flow_start_to_collect_info_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_collect_info_to_create_account_1_di" bpmnElement="flow_collect_info_to_create_account_1">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_create_account_to_welcome_email_1_di" bpmnElement="flow_create_account_to_welcome_email_1">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="657" y="70" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_it_support_1_di" bpmnElement="lane_it_support_1" isHorizontal="true"><dc:Bounds x="-3.0" y="170.0" width="756.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_prepare_equipment_1_di" bpmnElement="task_prepare_equipment_1">
+        <dc:Bounds x="175.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_ship_equipment_1_di" bpmnElement="task_ship_equipment_1">
+        <dc:Bounds x="325.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_prepare_equipment_to_ship_1_di" bpmnElement="flow_prepare_equipment_to_ship_1">
+        <di:waypoint x="275.0" y="270.0" />
+        <di:waypoint x="325.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="425.0" y="270.0" />
+        <di:waypoint x="507.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_training_coordinator_1_di" bpmnElement="lane_training_coordinator_1" isHorizontal="true"><dc:Bounds x="-3.0" y="370.0" width="756.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_schedule_training_1_di" bpmnElement="task_schedule_training_1">
+        <dc:Bounds x="175.0" y="430.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_conduct_training_1_di" bpmnElement="task_conduct_training_1">
+        <dc:Bounds x="325.0" y="430.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_event_onboarding_complete_1_di" bpmnElement="end_event_onboarding_complete_1">
+        <dc:Bounds x="507.0" y="452.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_schedule_training_to_conduct_training_1_di" bpmnElement="flow_schedule_training_to_conduct_training_1">
+        <di:waypoint x="275.0" y="470.0" />
+        <di:waypoint x="325.0" y="470.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_conduct_training_to_end_1_di" bpmnElement="flow_conduct_training_to_end_1">
+        <di:waypoint x="425.0" y="470.0" />
+        <di:waypoint x="507.0" y="470.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="flow_welcome_email_to_prepare_equipment_1_di" bpmnElement="flow_welcome_email_to_prepare_equipment_1"><di:waypoint x="525" y="110" /><di:waypoint x="225" y="230" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_ship_equipment_to_schedule_training_1_di" bpmnElement="flow_ship_equipment_to_schedule_training_1"><di:waypoint x="375" y="310" /><di:waypoint x="225" y="430" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

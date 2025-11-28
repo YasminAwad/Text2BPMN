@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Customer Service Department" processRef="customer_complaint_resolution" /></bpmn:collaboration><bpmn:process id="customer_complaint_resolution" name="Customer Complaint Resolution Process" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_agent_1" name="Customer Service Agent">
+        <bpmn:flowNodeRef>startEvent_complaint_received_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_record_complaint_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_waiting_period_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>intermediateEvent_timer_wait_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_investigate_complaint_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_resolve_complaint_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_resolution_time_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_complaint_resolved_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_resolution_failed_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_complaint_received_1" name="Complaint received">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_record_complaint_1" name="Record complaint">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_waiting_period_1" name="Same day?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateCatchEvent id="intermediateEvent_timer_wait_1" name="Wait until next day">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="timerEventDef_1" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="task_investigate_complaint_1" name="Investigate complaint">
+      <bpmn:incoming>flow_4</bpmn:incoming>
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_resolve_complaint_1" name="Resolve complaint">
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:outgoing>flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_resolution_time_1" name="Within 24 hours?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_7</bpmn:incoming>
+      <bpmn:outgoing>flow_8</bpmn:outgoing>
+      <bpmn:outgoing>flow_9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_complaint_resolved_1" name="Complaint resolved">
+      <bpmn:incoming>flow_8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="endEvent_resolution_failed_1" name="Resolution failed">
+      <bpmn:incoming>flow_9</bpmn:incoming>
+      <bpmn:errorEventDefinition id="errorEventDef_1" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="startEvent_complaint_received_1" targetRef="task_record_complaint_1" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="task_record_complaint_1" targetRef="exclusiveGateway_waiting_period_1" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="exclusiveGateway_waiting_period_1" targetRef="intermediateEvent_timer_wait_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Today = Complaint day</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_4" sourceRef="exclusiveGateway_waiting_period_1" targetRef="task_investigate_complaint_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Today &gt; Complaint day</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_5" sourceRef="intermediateEvent_timer_wait_1" targetRef="task_investigate_complaint_1" />
+    <bpmn:sequenceFlow id="flow_6" sourceRef="task_investigate_complaint_1" targetRef="task_resolve_complaint_1" />
+    <bpmn:sequenceFlow id="flow_7" sourceRef="task_resolve_complaint_1" targetRef="exclusiveGateway_resolution_time_1" />
+    <bpmn:sequenceFlow id="flow_8" sourceRef="exclusiveGateway_resolution_time_1" targetRef="endEvent_complaint_resolved_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">ResolutionTime &lt;= 24h</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_9" sourceRef="exclusiveGateway_resolution_time_1" targetRef="endEvent_resolution_failed_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">ResolutionTime &gt; 24h</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_customer_complaint_resolution">
+    <bpmndi:BPMNPlane id="BPMNPlane_customer_complaint_resolution" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="1236" height="318" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_agent_1_di" bpmnElement="lane_agent_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="1206.0" height="318.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_complaint_received_1_di" bpmnElement="startEvent_complaint_received_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_record_complaint_1_di" bpmnElement="task_record_complaint_1">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_waiting_period_1_di" bpmnElement="exclusiveGateway_waiting_period_1" isMarkerVisible="true">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="intermediateEvent_timer_wait_1_di" bpmnElement="intermediateEvent_timer_wait_1">
+        <dc:Bounds x="507" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_investigate_complaint_1_di" bpmnElement="task_investigate_complaint_1">
+        <dc:Bounds x="625" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_resolve_complaint_1_di" bpmnElement="task_resolve_complaint_1">
+        <dc:Bounds x="775" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_resolution_time_1_di" bpmnElement="exclusiveGateway_resolution_time_1" isMarkerVisible="true">
+        <dc:Bounds x="950" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_complaint_resolved_1_di" bpmnElement="endEvent_complaint_resolved_1">
+        <dc:Bounds x="1107" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_resolution_failed_1_di" bpmnElement="endEvent_resolution_failed_1">
+        <dc:Bounds x="1107" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="350" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="400" y="70" />
+        <di:waypoint x="507" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="375" y="95" />
+        <di:waypoint x="375" y="140" />
+        <di:waypoint x="675" y="140" />
+        <di:waypoint x="675" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="543" y="70" />
+        <di:waypoint x="625" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="725" y="70" />
+        <di:waypoint x="775" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7">
+        <di:waypoint x="875" y="70" />
+        <di:waypoint x="950" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_8_di" bpmnElement="flow_8">
+        <di:waypoint x="1000" y="70" />
+        <di:waypoint x="1107" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9">
+        <di:waypoint x="975" y="95" />
+        <di:waypoint x="975" y="210" />
+        <di:waypoint x="1107" y="210" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

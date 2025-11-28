@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Company" processRef="software_engineer_application_process" /></bpmn:collaboration><bpmn:process id="software_engineer_application_process" name="Software Engineer Application Process" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_system_1" name="System">
+        <bpmn:flowNodeRef>startEvent_application_submitted_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_check_completeness_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_application_complete_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_missing_documents_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_forward_to_hr_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_update_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_application_closed_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_hr_1" name="HR">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_review_skills_experience_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_hr_approve_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_engineering_1" name="Engineering Team">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_first_interview_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_first_interview_passed_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_technical_assessment_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_assessment_passed_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_arrange_final_interview_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_cto_1" name="CTO">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_conduct_final_interview_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_application_submitted_1" name="Submit application">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_check_completeness_1" name="Check application completeness">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_application_complete_1" name="Application complete?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_notify_missing_documents_1" name="Notify candidate to upload documents">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_forward_to_hr_1" name="Forward application to HR">
+      <bpmn:incoming>flow_4</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:task id="task_notify_update_1" name="Notify candidate of stage outcome">
+      <bpmn:outgoing>flow_17</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_application_closed_1" name="Close application">
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:incoming>flow_17</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="startEvent_application_submitted_1" targetRef="task_check_completeness_1" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="task_check_completeness_1" targetRef="exclusiveGateway_application_complete_1" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="exclusiveGateway_application_complete_1" targetRef="task_notify_missing_documents_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">application incomplete</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_4" sourceRef="exclusiveGateway_application_complete_1" targetRef="task_forward_to_hr_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">application complete</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_5" sourceRef="task_notify_missing_documents_1" targetRef="endEvent_application_closed_1" />
+    <bpmn:sequenceFlow id="flow_17" sourceRef="task_notify_update_1" targetRef="endEvent_application_closed_1" />
+  <bpmn:task id="task_review_skills_experience_1" name="Review skills and experience">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_hr_approve_1" name="HR approve?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_7</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow_7" sourceRef="task_review_skills_experience_1" targetRef="exclusiveGateway_hr_approve_1" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="exclusiveGateway_hr_approve_1" targetRef="mock_end_event" />
+  <bpmn:task id="task_schedule_first_interview_1" name="Schedule first-round interview">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_first_interview_passed_1" name="Candidate passed first interview?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_10</bpmn:incoming>
+      <bpmn:outgoing>flow_12</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_schedule_technical_assessment_1" name="Schedule technical assessment">
+      <bpmn:incoming>flow_12</bpmn:incoming>
+      <bpmn:outgoing>flow_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_assessment_passed_1" name="Candidate passed assessment?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_13</bpmn:incoming>
+      <bpmn:outgoing>flow_15</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_arrange_final_interview_1" name="Arrange final interview with CTO">
+      <bpmn:incoming>flow_15</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_10" sourceRef="task_schedule_first_interview_1" targetRef="exclusiveGateway_first_interview_passed_1" />
+    <bpmn:sequenceFlow id="flow_12" sourceRef="exclusiveGateway_first_interview_passed_1" targetRef="task_schedule_technical_assessment_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate passes interview</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_13" sourceRef="task_schedule_technical_assessment_1" targetRef="exclusiveGateway_assessment_passed_1" />
+    <bpmn:sequenceFlow id="flow_15" sourceRef="exclusiveGateway_assessment_passed_1" targetRef="task_arrange_final_interview_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate passes assessment</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_arrange_final_interview_1" targetRef="mock_end_event" />
+  <bpmn:task id="task_conduct_final_interview_1" name="Conduct final interview">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_conduct_final_interview_1" targetRef="mock_end_event" />
+  <bpmn:sequenceFlow id="flow_6" sourceRef="task_forward_to_hr_1" targetRef="task_review_skills_experience_1" /><bpmn:sequenceFlow id="flow_8" sourceRef="exclusiveGateway_hr_approve_1" targetRef="task_notify_update_1" /><bpmn:sequenceFlow id="flow_9" sourceRef="exclusiveGateway_hr_approve_1" targetRef="task_schedule_first_interview_1" /><bpmn:sequenceFlow id="flow_11" sourceRef="exclusiveGateway_first_interview_passed_1" targetRef="task_notify_update_1" /><bpmn:sequenceFlow id="flow_14" sourceRef="exclusiveGateway_assessment_passed_1" targetRef="task_notify_update_1" /><bpmn:sequenceFlow id="flow_16" sourceRef="task_arrange_final_interview_1" targetRef="task_conduct_final_interview_1" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_software_engineer_application_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_software_engineer_application_process" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-65" y="-30" width="1086" height="940" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_system_1_di" bpmnElement="lane_system_1" isHorizontal="true"><dc:Bounds x="-35.0" y="-30.0" width="1056.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_application_submitted_1_di" bpmnElement="startEvent_application_submitted_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_check_completeness_1_di" bpmnElement="task_check_completeness_1">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_application_complete_1_di" bpmnElement="exclusiveGateway_application_complete_1" isMarkerVisible="true">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_notify_missing_documents_1_di" bpmnElement="task_notify_missing_documents_1">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_application_closed_1_di" bpmnElement="endEvent_application_closed_1">
+        <dc:Bounds x="657" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_notify_update_1_di" bpmnElement="task_notify_update_1">
+        <dc:Bounds x="25" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_forward_to_hr_1_di" bpmnElement="task_forward_to_hr_1">
+        <dc:Bounds x="475" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="350" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="400" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="375" y="95" />
+        <di:waypoint x="375" y="210" />
+        <di:waypoint x="475" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="657" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_17_di" bpmnElement="flow_17">
+        <di:waypoint x="125" y="210" />
+        <di:waypoint x="150" y="210" />
+        <di:waypoint x="150" y="140" />
+        <di:waypoint x="600" y="140" />
+        <di:waypoint x="600" y="70" />
+        <di:waypoint x="657" y="70" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_hr_1_di" bpmnElement="lane_hr_1" isHorizontal="true"><dc:Bounds x="-35.0" y="310.0" width="1056.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_review_skills_experience_1_di" bpmnElement="task_review_skills_experience_1">
+        <dc:Bounds x="143.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_hr_approve_1_di" bpmnElement="exclusiveGateway_hr_approve_1" isMarkerVisible="true">
+        <dc:Bounds x="318.0" y="385.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7">
+        <di:waypoint x="243.0" y="410.0" />
+        <di:waypoint x="318.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="368.0" y="410.0" />
+        <di:waypoint x="475.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_engineering_1_di" bpmnElement="lane_engineering_1" isHorizontal="true"><dc:Bounds x="-35.0" y="510.0" width="1056.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_schedule_first_interview_1_di" bpmnElement="task_schedule_first_interview_1">
+        <dc:Bounds x="143.0" y="570.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_first_interview_passed_1_di" bpmnElement="exclusiveGateway_first_interview_passed_1" isMarkerVisible="true">
+        <dc:Bounds x="318.0" y="585.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_schedule_technical_assessment_1_di" bpmnElement="task_schedule_technical_assessment_1">
+        <dc:Bounds x="443.0" y="570.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_assessment_passed_1_di" bpmnElement="exclusiveGateway_assessment_passed_1" isMarkerVisible="true">
+        <dc:Bounds x="618.0" y="585.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_arrange_final_interview_1_di" bpmnElement="task_arrange_final_interview_1">
+        <dc:Bounds x="743.0" y="570.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_10_di" bpmnElement="flow_10">
+        <di:waypoint x="243.0" y="610.0" />
+        <di:waypoint x="318.0" y="610.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_12_di" bpmnElement="flow_12">
+        <di:waypoint x="368.0" y="610.0" />
+        <di:waypoint x="443.0" y="610.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_13_di" bpmnElement="flow_13">
+        <di:waypoint x="543.0" y="610.0" />
+        <di:waypoint x="618.0" y="610.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_15_di" bpmnElement="flow_15">
+        <di:waypoint x="668.0" y="610.0" />
+        <di:waypoint x="743.0" y="610.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="843.0" y="610.0" />
+        <di:waypoint x="925.0" y="610.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_cto_1_di" bpmnElement="lane_cto_1" isHorizontal="true"><dc:Bounds x="-35.0" y="710.0" width="1056.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_conduct_final_interview_1_di" bpmnElement="task_conduct_final_interview_1">
+        <dc:Bounds x="143.0" y="770.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="243.0" y="810.0" />
+        <di:waypoint x="325.0" y="810.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6"><di:waypoint x="525" y="250" /><di:waypoint x="193" y="370" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_8_di" bpmnElement="flow_8"><di:waypoint x="343" y="385" /><di:waypoint x="75" y="250" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9"><di:waypoint x="343" y="435" /><di:waypoint x="193" y="570" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_11_di" bpmnElement="flow_11"><di:waypoint x="343" y="585" /><di:waypoint x="75" y="250" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_14_di" bpmnElement="flow_14"><di:waypoint x="643" y="585" /><di:waypoint x="75" y="250" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_16_di" bpmnElement="flow_16"><di:waypoint x="793" y="650" /><di:waypoint x="193" y="770" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

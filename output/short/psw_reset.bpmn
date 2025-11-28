@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="User and IT Support" processRef="reset_company_email_password" /></bpmn:collaboration><bpmn:process id="reset_company_email_password" name="Reset Company Email Password" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_user_1" name="User">
+        <bpmn:flowNodeRef>startEvent_initiate_reset_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_submit_reset_request_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_attempt_automated_reset_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_reset_success_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_reset_completed_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_it_support_1" name="IT Support">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_receive_failure_notification_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_verify_identity_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_reset_password_manually_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_manual_reset_completed_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_initiate_reset_1" name="Initiate Password Reset">
+      <bpmn:outgoing>flow_start_to_submit_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_submit_reset_request_1" name="Submit Reset Request">
+      <bpmn:incoming>flow_start_to_submit_1</bpmn:incoming>
+      <bpmn:outgoing>flow_submit_to_attempt_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_attempt_automated_reset_1" name="Attempt Automated Reset">
+      <bpmn:incoming>flow_submit_to_attempt_1</bpmn:incoming>
+      <bpmn:outgoing>flow_attempt_to_gateway_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_reset_success_1" name="Reset Successful?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_attempt_to_gateway_1</bpmn:incoming>
+      <bpmn:outgoing>flow_gateway_to_end_reset_1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_reset_completed_1" name="Reset Completed">
+      <bpmn:incoming>flow_gateway_to_end_reset_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_start_to_submit_1" sourceRef="startEvent_initiate_reset_1" targetRef="task_submit_reset_request_1" />
+    <bpmn:sequenceFlow id="flow_submit_to_attempt_1" sourceRef="task_submit_reset_request_1" targetRef="task_attempt_automated_reset_1" />
+    <bpmn:sequenceFlow id="flow_attempt_to_gateway_1" sourceRef="task_attempt_automated_reset_1" targetRef="exclusiveGateway_reset_success_1" />
+    <bpmn:sequenceFlow id="flow_gateway_to_end_reset_1" sourceRef="exclusiveGateway_reset_success_1" targetRef="endEvent_reset_completed_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Automated reset successful</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  <bpmn:task id="task_receive_failure_notification_1" name="Receive Failure Notification">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_it_failure_to_verify_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_verify_identity_1" name="Verify User Identity">
+      <bpmn:incoming>flow_it_failure_to_verify_1</bpmn:incoming>
+      <bpmn:outgoing>flow_verify_to_manual_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_reset_password_manually_1" name="Reset Password Manually">
+      <bpmn:incoming>flow_verify_to_manual_1</bpmn:incoming>
+      <bpmn:outgoing>flow_manual_to_end_manual_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_manual_reset_completed_1" name="Manual Reset Completed">
+      <bpmn:incoming>flow_manual_to_end_manual_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_it_failure_to_verify_1" sourceRef="task_receive_failure_notification_1" targetRef="task_verify_identity_1" />
+    <bpmn:sequenceFlow id="flow_verify_to_manual_1" sourceRef="task_verify_identity_1" targetRef="task_reset_password_manually_1" />
+    <bpmn:sequenceFlow id="flow_manual_to_end_manual_1" sourceRef="task_reset_password_manually_1" targetRef="endEvent_manual_reset_completed_1" />
+  <bpmn:sequenceFlow id="flow_gateway_to_it_failure_1" sourceRef="exclusiveGateway_reset_success_1" targetRef="task_receive_failure_notification_1" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_reset_company_email_password">
+    <bpmndi:BPMNPlane id="BPMNPlane_reset_company_email_password" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="786" height="400" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_user_1_di" bpmnElement="lane_user_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="756.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_initiate_reset_1_di" bpmnElement="startEvent_initiate_reset_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_submit_reset_request_1_di" bpmnElement="task_submit_reset_request_1">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_attempt_automated_reset_1_di" bpmnElement="task_attempt_automated_reset_1">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_reset_success_1_di" bpmnElement="exclusiveGateway_reset_success_1" isMarkerVisible="true">
+        <dc:Bounds x="500" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_reset_completed_1_di" bpmnElement="endEvent_reset_completed_1">
+        <dc:Bounds x="657" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_to_submit_1_di" bpmnElement="flow_start_to_submit_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_submit_to_attempt_1_di" bpmnElement="flow_submit_to_attempt_1">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_attempt_to_gateway_1_di" bpmnElement="flow_attempt_to_gateway_1">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="500" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_to_end_reset_1_di" bpmnElement="flow_gateway_to_end_reset_1">
+        <di:waypoint x="550" y="70" />
+        <di:waypoint x="657" y="70" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_it_support_1_di" bpmnElement="lane_it_support_1" isHorizontal="true"><dc:Bounds x="-3.0" y="170.0" width="756.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_receive_failure_notification_1_di" bpmnElement="task_receive_failure_notification_1">
+        <dc:Bounds x="175.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_verify_identity_1_di" bpmnElement="task_verify_identity_1">
+        <dc:Bounds x="325.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_reset_password_manually_1_di" bpmnElement="task_reset_password_manually_1">
+        <dc:Bounds x="475.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_manual_reset_completed_1_di" bpmnElement="endEvent_manual_reset_completed_1">
+        <dc:Bounds x="657.0" y="252.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_it_failure_to_verify_1_di" bpmnElement="flow_it_failure_to_verify_1">
+        <di:waypoint x="275.0" y="270.0" />
+        <di:waypoint x="325.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_verify_to_manual_1_di" bpmnElement="flow_verify_to_manual_1">
+        <di:waypoint x="425.0" y="270.0" />
+        <di:waypoint x="475.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_manual_to_end_manual_1_di" bpmnElement="flow_manual_to_end_manual_1">
+        <di:waypoint x="575.0" y="270.0" />
+        <di:waypoint x="657.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="flow_gateway_to_it_failure_1_di" bpmnElement="flow_gateway_to_it_failure_1"><di:waypoint x="525" y="95" /><di:waypoint x="225" y="230" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

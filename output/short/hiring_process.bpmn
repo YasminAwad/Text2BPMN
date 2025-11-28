@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="HR Department" processRef="hire_it_position_process" /></bpmn:collaboration><bpmn:process id="hire_it_position_process" name="Hiring Process for IT Position" isExecutable="false">
+    <bpmn:laneSet id="laneSet_hr_department_1">
+      <bpmn:lane id="lane_hr_specialist_1" name="HR Specialist">
+        <bpmn:flowNodeRef>startEvent_begin_hiring_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_post_job_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_receive_applications_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_screen_applications_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_candidates_available_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_no_candidates_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_interview_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_conduct_interview_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_candidate_selected_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_hiring_complete_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_repeat_interviews_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_begin_hiring_1" name="Begin hiring process">
+      <bpmn:outgoing>flow_start_to_post_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_post_job_1" name="Post job opening">
+      <bpmn:incoming>flow_start_to_post_1</bpmn:incoming>
+      <bpmn:outgoing>flow_post_to_receive_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_receive_applications_1" name="Receive applications">
+      <bpmn:incoming>flow_post_to_receive_1</bpmn:incoming>
+      <bpmn:outgoing>flow_receive_to_screen_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_screen_applications_1" name="Screen applications">
+      <bpmn:incoming>flow_receive_to_screen_1</bpmn:incoming>
+      <bpmn:outgoing>flow_screen_to_candidates_available_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_candidates_available_1" name="Candidates available?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_screen_to_candidates_available_1</bpmn:incoming>
+      <bpmn:outgoing>flow_candidates_no_1</bpmn:outgoing>
+      <bpmn:outgoing>flow_candidates_yes_1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_no_candidates_1" name="End process (no candidates)">
+      <bpmn:incoming>flow_candidates_no_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="task_schedule_interview_1" name="Schedule candidate interview">
+      <bpmn:incoming>flow_candidates_yes_1</bpmn:incoming>
+      <bpmn:incoming>flow_repeat_to_schedule_1</bpmn:incoming>
+      <bpmn:outgoing>flow_schedule_to_conduct_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_conduct_interview_1" name="Conduct interview">
+      <bpmn:incoming>flow_schedule_to_conduct_1</bpmn:incoming>
+      <bpmn:outgoing>flow_conduct_to_candidate_selected_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_candidate_selected_1" name="Final candidate selected?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_conduct_to_candidate_selected_1</bpmn:incoming>
+      <bpmn:outgoing>flow_selected_yes_1</bpmn:outgoing>
+      <bpmn:outgoing>flow_selected_no_1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_hiring_complete_1" name="Hiring complete">
+      <bpmn:incoming>flow_selected_yes_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="exclusiveGateway_repeat_interviews_1" name="Repeat interviews?" gatewayDirection="converging">
+      <bpmn:incoming>flow_selected_no_1</bpmn:incoming>
+      <bpmn:outgoing>flow_repeat_to_schedule_1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow_start_to_post_1" sourceRef="startEvent_begin_hiring_1" targetRef="task_post_job_1" />
+    <bpmn:sequenceFlow id="flow_post_to_receive_1" sourceRef="task_post_job_1" targetRef="task_receive_applications_1" />
+    <bpmn:sequenceFlow id="flow_receive_to_screen_1" sourceRef="task_receive_applications_1" targetRef="task_screen_applications_1" />
+    <bpmn:sequenceFlow id="flow_screen_to_candidates_available_1" sourceRef="task_screen_applications_1" targetRef="exclusiveGateway_candidates_available_1" />
+    <bpmn:sequenceFlow id="flow_candidates_no_1" sourceRef="exclusiveGateway_candidates_available_1" targetRef="endEvent_no_candidates_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no candidates available</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_candidates_yes_1" sourceRef="exclusiveGateway_candidates_available_1" targetRef="task_schedule_interview_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">candidates available</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_schedule_to_conduct_1" sourceRef="task_schedule_interview_1" targetRef="task_conduct_interview_1" />
+    <bpmn:sequenceFlow id="flow_conduct_to_candidate_selected_1" sourceRef="task_conduct_interview_1" targetRef="exclusiveGateway_candidate_selected_1" />
+    <bpmn:sequenceFlow id="flow_selected_yes_1" sourceRef="exclusiveGateway_candidate_selected_1" targetRef="endEvent_hiring_complete_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">final candidate selected</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_selected_no_1" sourceRef="exclusiveGateway_candidate_selected_1" targetRef="exclusiveGateway_repeat_interviews_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no candidate selected</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_repeat_to_schedule_1" sourceRef="exclusiveGateway_repeat_interviews_1" targetRef="task_schedule_interview_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_hire_it_position_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_hire_it_position_process" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="1543" height="340" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_hr_specialist_1_di" bpmnElement="lane_hr_specialist_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="1513.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_begin_hiring_1_di" bpmnElement="startEvent_begin_hiring_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_post_job_1_di" bpmnElement="task_post_job_1">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_receive_applications_1_di" bpmnElement="task_receive_applications_1">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_screen_applications_1_di" bpmnElement="task_screen_applications_1">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_candidates_available_1_di" bpmnElement="exclusiveGateway_candidates_available_1" isMarkerVisible="true">
+        <dc:Bounds x="650" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_no_candidates_1_di" bpmnElement="endEvent_no_candidates_1">
+        <dc:Bounds x="807" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_schedule_interview_1_di" bpmnElement="task_schedule_interview_1">
+        <dc:Bounds x="775" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_conduct_interview_1_di" bpmnElement="task_conduct_interview_1">
+        <dc:Bounds x="925" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_candidate_selected_1_di" bpmnElement="exclusiveGateway_candidate_selected_1" isMarkerVisible="true">
+        <dc:Bounds x="1100" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_hiring_complete_1_di" bpmnElement="endEvent_hiring_complete_1">
+        <dc:Bounds x="1257" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_repeat_interviews_1_di" bpmnElement="exclusiveGateway_repeat_interviews_1" isMarkerVisible="true">
+        <dc:Bounds x="1400" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_to_post_1_di" bpmnElement="flow_start_to_post_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_post_to_receive_1_di" bpmnElement="flow_post_to_receive_1">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_receive_to_screen_1_di" bpmnElement="flow_receive_to_screen_1">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_screen_to_candidates_available_1_di" bpmnElement="flow_screen_to_candidates_available_1">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="650" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_candidates_no_1_di" bpmnElement="flow_candidates_no_1">
+        <di:waypoint x="700" y="70" />
+        <di:waypoint x="807" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_candidates_yes_1_di" bpmnElement="flow_candidates_yes_1">
+        <di:waypoint x="675" y="95" />
+        <di:waypoint x="675" y="210" />
+        <di:waypoint x="775" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_schedule_to_conduct_1_di" bpmnElement="flow_schedule_to_conduct_1">
+        <di:waypoint x="875" y="210" />
+        <di:waypoint x="925" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_conduct_to_candidate_selected_1_di" bpmnElement="flow_conduct_to_candidate_selected_1">
+        <di:waypoint x="1025" y="210" />
+        <di:waypoint x="1100" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_selected_yes_1_di" bpmnElement="flow_selected_yes_1">
+        <di:waypoint x="1150" y="210" />
+        <di:waypoint x="1257" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_selected_no_1_di" bpmnElement="flow_selected_no_1">
+        <di:waypoint x="1125" y="235" />
+        <di:waypoint x="1125" y="280" />
+        <di:waypoint x="1425" y="280" />
+        <di:waypoint x="1425" y="235" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_repeat_to_schedule_1_di" bpmnElement="flow_repeat_to_schedule_1">
+        <di:waypoint x="1425" y="235" />
+        <di:waypoint x="1425" y="280" />
+        <di:waypoint x="825" y="280" />
+        <di:waypoint x="825" y="250" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

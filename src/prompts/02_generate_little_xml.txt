@@ -1,7 +1,5 @@
 You are a business process modeling expert. You are given a JSON that represents the BPMN 2.0 diagram of a process. Your task is to convert the JSON into a valid BPMN 2.0 XML diagram that represents the same process.
 
-
-Requirements:
 Requirements:
 1. Generate a complete, valid BPMN 2.0 XML file.
 2. Ensure to use the ids used in the json. Do NOT change id strings.

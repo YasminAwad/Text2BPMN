@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Manager Approval" processRef="approve_request_process" /></bpmn:collaboration><bpmn:process id="approve_request_process" name="Request Approval Process" isExecutable="false">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_requestor_1" name="Requestor">
+        <bpmn:flowNodeRef>startEvent_request_received_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_check_approval_needed_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_approval_needed_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_manager_2" name="Manager">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_approve_request_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_request_approved_5</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_request_received_1" name="Receive request">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_check_approval_needed_2" name="Check approval needed">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_approval_needed_3" name="Approval needed?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="startEvent_request_received_1" targetRef="task_check_approval_needed_2" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="task_check_approval_needed_2" targetRef="exclusiveGateway_approval_needed_3" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="exclusiveGateway_approval_needed_3" targetRef="mock_end_event" />
+  <bpmn:task id="task_approve_request_4" name="Approve request">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_request_approved_5" name="Request approved">
+      <bpmn:incoming>flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_5" sourceRef="task_approve_request_4" targetRef="endEvent_request_approved_5" />
+  <bpmn:sequenceFlow id="flow_3" sourceRef="exclusiveGateway_approval_needed_3" targetRef="task_approve_request_4" /><bpmn:sequenceFlow id="flow_4" sourceRef="exclusiveGateway_approval_needed_3" targetRef="endEvent_request_approved_5" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_approve_request_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_approve_request_process" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="636" height="400" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_requestor_1_di" bpmnElement="lane_requestor_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="606.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_request_received_1_di" bpmnElement="startEvent_request_received_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_check_approval_needed_2_di" bpmnElement="task_check_approval_needed_2">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_approval_needed_3_di" bpmnElement="exclusiveGateway_approval_needed_3" isMarkerVisible="true">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="350" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="400" y="70" />
+        <di:waypoint x="507" y="70" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_manager_2_di" bpmnElement="lane_manager_2" isHorizontal="true"><dc:Bounds x="-3.0" y="170.0" width="606.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_approve_request_4_di" bpmnElement="task_approve_request_4">
+        <dc:Bounds x="175.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_request_approved_5_di" bpmnElement="endEvent_request_approved_5">
+        <dc:Bounds x="357.0" y="252.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="275.0" y="270.0" />
+        <di:waypoint x="357.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3"><di:waypoint x="375" y="95" /><di:waypoint x="225" y="230" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4"><di:waypoint x="375" y="95" /><di:waypoint x="375" y="252" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

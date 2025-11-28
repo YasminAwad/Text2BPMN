@@ -1,0 +1,594 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Technology Company" processRef="hiring_process_it_position" /></bpmn:collaboration><bpmn:process id="hiring_process_it_position" name="Hiring Process for IT Position" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_hr_1" name="HR">
+        <bpmn:flowNodeRef>start_event_position_need_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_create_job_posting_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_post_job_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_screen_resume_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_resume_pass_5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_send_rejection_email_6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_phone_screen_7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_conduct_phone_screen_8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_phone_screen_pass_9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_enter_feedback_10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_forward_candidate_11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_engineering_2" name="Engineering">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_review_hr_notes_12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_invite_tech_interview_13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_conduct_first_tech_interview_14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_log_technical_feedback_15</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_first_interview_pass_16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_reject_candidate_17</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_initiate_interview_loop_18</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_interview_panel_19</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_panel_score_candidate_20</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_panel_decision_21</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_additional_interview_22</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_reject_candidate_panel_23</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_confirm_finalist_24</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_schedule_director_interview_25</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_conduct_director_interview_26</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_director_decision_27</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_reject_candidate_director_28</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_offer_onboarding_3" name="Offer &amp; Onboarding">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_prepare_offer_29</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_approve_offer_package_30</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_generate_offer_letter_31</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_present_offer_32</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_candidate_decision_33</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_negotiate_offer_34</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_negotiation_outcome_35</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_reject_candidate_offer_36</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_preonboarding_37</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_event_hiring_complete_38</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="start_event_position_need_1" name="Position Need Identified">
+      <bpmn:outgoing>flow_start_to_create_posting_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_create_job_posting_2" name="Create Job Posting">
+      <bpmn:incoming>flow_start_to_create_posting_1</bpmn:incoming>
+      <bpmn:outgoing>flow_create_posting_to_post_job_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_post_job_3" name="Post Job to Boards">
+      <bpmn:incoming>flow_create_posting_to_post_job_2</bpmn:incoming>
+      <bpmn:outgoing>flow_post_job_to_screen_resume_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_screen_resume_4" name="Screen Resume">
+      <bpmn:incoming>flow_post_job_to_screen_resume_3</bpmn:incoming>
+      <bpmn:outgoing>flow_screen_resume_to_resume_pass_4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_resume_pass_5" name="Resume Pass?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_screen_resume_to_resume_pass_4</bpmn:incoming>
+      <bpmn:outgoing>flow_resume_pass_to_send_rejection_5</bpmn:outgoing>
+      <bpmn:outgoing>flow_resume_pass_to_schedule_phone_6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_send_rejection_email_6" name="Send Rejection Email">
+      <bpmn:incoming>flow_resume_pass_to_send_rejection_5</bpmn:incoming>
+      <bpmn:incoming>flow_phone_pass_to_send_rejection_9</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:task id="task_schedule_phone_screen_7" name="Schedule Phone Screen">
+      <bpmn:incoming>flow_resume_pass_to_schedule_phone_6</bpmn:incoming>
+      <bpmn:outgoing>flow_schedule_phone_to_conduct_screen_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_conduct_phone_screen_8" name="Conduct Phone Screening">
+      <bpmn:incoming>flow_schedule_phone_to_conduct_screen_7</bpmn:incoming>
+      <bpmn:outgoing>flow_conduct_screen_to_phone_pass_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_phone_screen_pass_9" name="Phone Screen Pass?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_conduct_screen_to_phone_pass_8</bpmn:incoming>
+      <bpmn:outgoing>flow_phone_pass_to_send_rejection_9</bpmn:outgoing>
+      <bpmn:outgoing>flow_phone_pass_to_enter_feedback_10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_enter_feedback_10" name="Enter Feedback">
+      <bpmn:incoming>flow_phone_pass_to_enter_feedback_10</bpmn:incoming>
+      <bpmn:outgoing>flow_feedback_to_forward_candidate_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_forward_candidate_11" name="Forward Candidate to Engineering">
+      <bpmn:incoming>flow_feedback_to_forward_candidate_11</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_start_to_create_posting_1" sourceRef="start_event_position_need_1" targetRef="task_create_job_posting_2" />
+    <bpmn:sequenceFlow id="flow_create_posting_to_post_job_2" sourceRef="task_create_job_posting_2" targetRef="task_post_job_3" />
+    <bpmn:sequenceFlow id="flow_post_job_to_screen_resume_3" sourceRef="task_post_job_3" targetRef="task_screen_resume_4" />
+    <bpmn:sequenceFlow id="flow_screen_resume_to_resume_pass_4" sourceRef="task_screen_resume_4" targetRef="exclusiveGateway_resume_pass_5" />
+    <bpmn:sequenceFlow id="flow_resume_pass_to_send_rejection_5" sourceRef="exclusiveGateway_resume_pass_5" targetRef="task_send_rejection_email_6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate fails resume screening</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_resume_pass_to_schedule_phone_6" sourceRef="exclusiveGateway_resume_pass_5" targetRef="task_schedule_phone_screen_7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate passes resume screening</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_schedule_phone_to_conduct_screen_7" sourceRef="task_schedule_phone_screen_7" targetRef="task_conduct_phone_screen_8" />
+    <bpmn:sequenceFlow id="flow_conduct_screen_to_phone_pass_8" sourceRef="task_conduct_phone_screen_8" targetRef="exclusiveGateway_phone_screen_pass_9" />
+    <bpmn:sequenceFlow id="flow_phone_pass_to_send_rejection_9" sourceRef="exclusiveGateway_phone_screen_pass_9" targetRef="task_send_rejection_email_6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate fails phone screening</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_phone_pass_to_enter_feedback_10" sourceRef="exclusiveGateway_phone_screen_pass_9" targetRef="task_enter_feedback_10">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate passes phone screening</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_feedback_to_forward_candidate_11" sourceRef="task_enter_feedback_10" targetRef="task_forward_candidate_11" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_forward_candidate_11" targetRef="mock_end_event" />
+  <bpmn:task id="task_review_hr_notes_12" name="Review HR Notes">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_review_notes_to_invite_tech_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_invite_tech_interview_13" name="Invite to Technical Interview">
+      <bpmn:incoming>flow_review_notes_to_invite_tech_13</bpmn:incoming>
+      <bpmn:outgoing>flow_invite_tech_to_conduct_first_14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_conduct_first_tech_interview_14" name="Conduct First Technical Interview">
+      <bpmn:incoming>flow_invite_tech_to_conduct_first_14</bpmn:incoming>
+      <bpmn:outgoing>flow_conduct_first_to_log_feedback_15</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_log_technical_feedback_15" name="Log Technical Feedback">
+      <bpmn:incoming>flow_conduct_first_to_log_feedback_15</bpmn:incoming>
+      <bpmn:outgoing>flow_log_feedback_to_first_interview_pass_16</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_first_interview_pass_16" name="First Interview Pass?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_log_feedback_to_first_interview_pass_16</bpmn:incoming>
+      <bpmn:outgoing>flow_first_interview_pass_to_reject_candidate_17</bpmn:outgoing>
+      <bpmn:outgoing>flow_first_interview_pass_to_initiate_loop_18</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_reject_candidate_17" name="Reject Candidate">
+      <bpmn:incoming>flow_first_interview_pass_to_reject_candidate_17</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_initiate_interview_loop_18" name="Initiate Interview Loop">
+      <bpmn:incoming>flow_first_interview_pass_to_initiate_loop_18</bpmn:incoming>
+      <bpmn:outgoing>flow_initiate_loop_to_panel_interview_19</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_interview_panel_19" name="Conduct Interview Panel">
+      <bpmn:incoming>flow_initiate_loop_to_panel_interview_19</bpmn:incoming>
+      <bpmn:incoming>flow_schedule_additional_to_panel_interview_23</bpmn:incoming>
+      <bpmn:outgoing>flow_panel_interview_to_panel_score_20</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_panel_score_candidate_20" name="Panel Score Candidate">
+      <bpmn:incoming>flow_panel_interview_to_panel_score_20</bpmn:incoming>
+      <bpmn:outgoing>flow_panel_score_to_panel_decision_21</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_panel_decision_21" name="Panel Decision" gatewayDirection="diverging">
+      <bpmn:incoming>flow_panel_score_to_panel_decision_21</bpmn:incoming>
+      <bpmn:outgoing>flow_panel_decision_to_schedule_additional_22</bpmn:outgoing>
+      <bpmn:outgoing>flow_panel_decision_to_reject_candidate_panel_23</bpmn:outgoing>
+      <bpmn:outgoing>flow_panel_decision_to_confirm_finalist_24</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_schedule_additional_interview_22" name="Schedule Additional Interview">
+      <bpmn:incoming>flow_panel_decision_to_schedule_additional_22</bpmn:incoming>
+      <bpmn:outgoing>flow_schedule_additional_to_panel_interview_23</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_reject_candidate_panel_23" name="Reject Candidate">
+      <bpmn:incoming>flow_panel_decision_to_reject_candidate_panel_23</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_confirm_finalist_24" name="Confirm Finalist">
+      <bpmn:incoming>flow_panel_decision_to_confirm_finalist_24</bpmn:incoming>
+      <bpmn:outgoing>flow_confirm_finalist_to_schedule_director_25</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_schedule_director_interview_25" name="Schedule Director Interview">
+      <bpmn:incoming>flow_confirm_finalist_to_schedule_director_25</bpmn:incoming>
+      <bpmn:outgoing>flow_schedule_director_to_conduct_director_26</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_conduct_director_interview_26" name="Conduct Director Interview">
+      <bpmn:incoming>flow_schedule_director_to_conduct_director_26</bpmn:incoming>
+      <bpmn:outgoing>flow_conduct_director_to_director_decision_27</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_director_decision_27" name="Director Decision" gatewayDirection="diverging">
+      <bpmn:incoming>flow_conduct_director_to_director_decision_27</bpmn:incoming>
+      <bpmn:outgoing>flow_director_decision_to_reject_candidate_director_28</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_reject_candidate_director_28" name="Reject Candidate">
+      <bpmn:incoming>flow_director_decision_to_reject_candidate_director_28</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_review_notes_to_invite_tech_13" sourceRef="task_review_hr_notes_12" targetRef="task_invite_tech_interview_13" />
+    <bpmn:sequenceFlow id="flow_invite_tech_to_conduct_first_14" sourceRef="task_invite_tech_interview_13" targetRef="task_conduct_first_tech_interview_14" />
+    <bpmn:sequenceFlow id="flow_conduct_first_to_log_feedback_15" sourceRef="task_conduct_first_tech_interview_14" targetRef="task_log_technical_feedback_15" />
+    <bpmn:sequenceFlow id="flow_log_feedback_to_first_interview_pass_16" sourceRef="task_log_technical_feedback_15" targetRef="exclusiveGateway_first_interview_pass_16" />
+    <bpmn:sequenceFlow id="flow_first_interview_pass_to_reject_candidate_17" sourceRef="exclusiveGateway_first_interview_pass_16" targetRef="task_reject_candidate_17">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate unsuitable</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_first_interview_pass_to_initiate_loop_18" sourceRef="exclusiveGateway_first_interview_pass_16" targetRef="task_initiate_interview_loop_18">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate promising</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_initiate_loop_to_panel_interview_19" sourceRef="task_initiate_interview_loop_18" targetRef="task_interview_panel_19" />
+    <bpmn:sequenceFlow id="flow_panel_interview_to_panel_score_20" sourceRef="task_interview_panel_19" targetRef="task_panel_score_candidate_20" />
+    <bpmn:sequenceFlow id="flow_panel_score_to_panel_decision_21" sourceRef="task_panel_score_candidate_20" targetRef="exclusiveGateway_panel_decision_21" />
+    <bpmn:sequenceFlow id="flow_panel_decision_to_schedule_additional_22" sourceRef="exclusiveGateway_panel_decision_21" targetRef="task_schedule_additional_interview_22">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Panel scores unclear</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_panel_decision_to_reject_candidate_panel_23" sourceRef="exclusiveGateway_panel_decision_21" targetRef="task_reject_candidate_panel_23">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Panel scores below threshold</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_panel_decision_to_confirm_finalist_24" sourceRef="exclusiveGateway_panel_decision_21" targetRef="task_confirm_finalist_24">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Panel scores above threshold</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_schedule_additional_to_panel_interview_23" sourceRef="task_schedule_additional_interview_22" targetRef="task_interview_panel_19" />
+    <bpmn:sequenceFlow id="flow_confirm_finalist_to_schedule_director_25" sourceRef="task_confirm_finalist_24" targetRef="task_schedule_director_interview_25" />
+    <bpmn:sequenceFlow id="flow_schedule_director_to_conduct_director_26" sourceRef="task_schedule_director_interview_25" targetRef="task_conduct_director_interview_26" />
+    <bpmn:sequenceFlow id="flow_conduct_director_to_director_decision_27" sourceRef="task_conduct_director_interview_26" targetRef="exclusiveGateway_director_decision_27" />
+    <bpmn:sequenceFlow id="flow_director_decision_to_reject_candidate_director_28" sourceRef="exclusiveGateway_director_decision_27" targetRef="task_reject_candidate_director_28">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Director rejects candidate</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_reject_candidate_director_28" targetRef="mock_end_event" />
+    <bpmn:sequenceFlow id="end_event_flow_panel" sourceRef="task_reject_candidate_panel_23" targetRef="mock_end_event" />
+    <bpmn:sequenceFlow id="end_event_flow_first_interview" sourceRef="task_reject_candidate_17" targetRef="mock_end_event" />
+  <bpmn:task id="task_prepare_offer_29" name="Prepare Offer">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_prepare_offer_to_approve_offer_30</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_approve_offer_package_30" name="Approve Offer Package">
+      <bpmn:incoming>flow_prepare_offer_to_approve_offer_30</bpmn:incoming>
+      <bpmn:outgoing>flow_approve_offer_to_generate_offer_31</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_generate_offer_letter_31" name="Generate Offer Letter">
+      <bpmn:incoming>flow_approve_offer_to_generate_offer_31</bpmn:incoming>
+      <bpmn:outgoing>flow_generate_offer_to_present_offer_32</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_present_offer_32" name="Present Offer">
+      <bpmn:incoming>flow_generate_offer_to_present_offer_32</bpmn:incoming>
+      <bpmn:outgoing>flow_present_offer_to_candidate_decision_33</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_candidate_decision_33" name="Candidate Decision" gatewayDirection="diverging">
+      <bpmn:incoming>flow_present_offer_to_candidate_decision_33</bpmn:incoming>
+      <bpmn:outgoing>flow_candidate_decision_to_negotiate_offer_34</bpmn:outgoing>
+      <bpmn:outgoing>flow_candidate_decision_to_preonboarding_35</bpmn:outgoing>
+      <bpmn:outgoing>flow_candidate_decision_to_reject_candidate_offer_36</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_negotiate_offer_34" name="Negotiate Offer">
+      <bpmn:incoming>flow_candidate_decision_to_negotiate_offer_34</bpmn:incoming>
+      <bpmn:outgoing>flow_negotiate_offer_to_negotiation_outcome_36</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_negotiation_outcome_35" name="Negotiation Outcome" gatewayDirection="diverging">
+      <bpmn:incoming>flow_negotiate_offer_to_negotiation_outcome_36</bpmn:incoming>
+      <bpmn:outgoing>flow_negotiation_outcome_to_preonboarding_37</bpmn:outgoing>
+      <bpmn:outgoing>flow_negotiation_outcome_to_reject_candidate_offer_38</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_reject_candidate_offer_36" name="Reject Candidate">
+      <bpmn:incoming>flow_candidate_decision_to_reject_candidate_offer_36</bpmn:incoming>
+      <bpmn:incoming>flow_negotiation_outcome_to_reject_candidate_offer_38</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:task id="task_preonboarding_37" name="Pre-Onboarding Activities">
+      <bpmn:incoming>flow_candidate_decision_to_preonboarding_35</bpmn:incoming>
+      <bpmn:incoming>flow_negotiation_outcome_to_preonboarding_37</bpmn:incoming>
+      <bpmn:outgoing>flow_preonboarding_to_end_event_39</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="end_event_hiring_complete_38" name="Hiring Complete">
+      <bpmn:incoming>flow_preonboarding_to_end_event_39</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_prepare_offer_to_approve_offer_30" sourceRef="task_prepare_offer_29" targetRef="task_approve_offer_package_30" />
+    <bpmn:sequenceFlow id="flow_approve_offer_to_generate_offer_31" sourceRef="task_approve_offer_package_30" targetRef="task_generate_offer_letter_31" />
+    <bpmn:sequenceFlow id="flow_generate_offer_to_present_offer_32" sourceRef="task_generate_offer_letter_31" targetRef="task_present_offer_32" />
+    <bpmn:sequenceFlow id="flow_present_offer_to_candidate_decision_33" sourceRef="task_present_offer_32" targetRef="exclusiveGateway_candidate_decision_33" />
+    <bpmn:sequenceFlow id="flow_candidate_decision_to_negotiate_offer_34" sourceRef="exclusiveGateway_candidate_decision_33" targetRef="task_negotiate_offer_34">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate requests negotiation</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_candidate_decision_to_preonboarding_35" sourceRef="exclusiveGateway_candidate_decision_33" targetRef="task_preonboarding_37">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate accepts offer</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_candidate_decision_to_reject_candidate_offer_36" sourceRef="exclusiveGateway_candidate_decision_33" targetRef="task_reject_candidate_offer_36">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate declines offer</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_negotiate_offer_to_negotiation_outcome_36" sourceRef="task_negotiate_offer_34" targetRef="exclusiveGateway_negotiation_outcome_35" />
+    <bpmn:sequenceFlow id="flow_negotiation_outcome_to_preonboarding_37" sourceRef="exclusiveGateway_negotiation_outcome_35" targetRef="task_preonboarding_37">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate accepts adjusted offer</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_negotiation_outcome_to_reject_candidate_offer_38" sourceRef="exclusiveGateway_negotiation_outcome_35" targetRef="task_reject_candidate_offer_36">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Candidate declines adjusted offer</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_preonboarding_to_end_event_39" sourceRef="task_preonboarding_37" targetRef="end_event_hiring_complete_38" />
+  <bpmn:sequenceFlow id="flow_forward_candidate_to_review_notes_12" sourceRef="task_forward_candidate_11" targetRef="task_review_hr_notes_12" /><bpmn:sequenceFlow id="flow_director_decision_to_prepare_offer_29" sourceRef="exclusiveGateway_director_decision_27" targetRef="task_prepare_offer_29" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_hiring_process_it_position">
+    <bpmndi:BPMNPlane id="BPMNPlane_hiring_process_it_position" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="2318" height="1300" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_hr_1_di" bpmnElement="lane_hr_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="2288.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="start_event_position_need_1_di" bpmnElement="start_event_position_need_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_create_job_posting_2_di" bpmnElement="task_create_job_posting_2">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_post_job_3_di" bpmnElement="task_post_job_3">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_screen_resume_4_di" bpmnElement="task_screen_resume_4">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_resume_pass_5_di" bpmnElement="exclusiveGateway_resume_pass_5" isMarkerVisible="true">
+        <dc:Bounds x="650" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_send_rejection_email_6_di" bpmnElement="task_send_rejection_email_6">
+        <dc:Bounds x="775" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_schedule_phone_screen_7_di" bpmnElement="task_schedule_phone_screen_7">
+        <dc:Bounds x="775" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_conduct_phone_screen_8_di" bpmnElement="task_conduct_phone_screen_8">
+        <dc:Bounds x="925" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_phone_screen_pass_9_di" bpmnElement="exclusiveGateway_phone_screen_pass_9" isMarkerVisible="true">
+        <dc:Bounds x="1100" y="185" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_enter_feedback_10_di" bpmnElement="task_enter_feedback_10">
+        <dc:Bounds x="1225" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_forward_candidate_11_di" bpmnElement="task_forward_candidate_11">
+        <dc:Bounds x="1375" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_to_create_posting_1_di" bpmnElement="flow_start_to_create_posting_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_create_posting_to_post_job_2_di" bpmnElement="flow_create_posting_to_post_job_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_post_job_to_screen_resume_3_di" bpmnElement="flow_post_job_to_screen_resume_3">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_screen_resume_to_resume_pass_4_di" bpmnElement="flow_screen_resume_to_resume_pass_4">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="650" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_resume_pass_to_send_rejection_5_di" bpmnElement="flow_resume_pass_to_send_rejection_5">
+        <di:waypoint x="700" y="70" />
+        <di:waypoint x="775" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_resume_pass_to_schedule_phone_6_di" bpmnElement="flow_resume_pass_to_schedule_phone_6">
+        <di:waypoint x="675" y="95" />
+        <di:waypoint x="675" y="210" />
+        <di:waypoint x="775" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_schedule_phone_to_conduct_screen_7_di" bpmnElement="flow_schedule_phone_to_conduct_screen_7">
+        <di:waypoint x="875" y="210" />
+        <di:waypoint x="925" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_conduct_screen_to_phone_pass_8_di" bpmnElement="flow_conduct_screen_to_phone_pass_8">
+        <di:waypoint x="1025" y="210" />
+        <di:waypoint x="1100" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_phone_pass_to_send_rejection_9_di" bpmnElement="flow_phone_pass_to_send_rejection_9">
+        <di:waypoint x="1125" y="235" />
+        <di:waypoint x="1125" y="280" />
+        <di:waypoint x="825" y="280" />
+        <di:waypoint x="825" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_phone_pass_to_enter_feedback_10_di" bpmnElement="flow_phone_pass_to_enter_feedback_10">
+        <di:waypoint x="1150" y="210" />
+        <di:waypoint x="1225" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_feedback_to_forward_candidate_11_di" bpmnElement="flow_feedback_to_forward_candidate_11">
+        <di:waypoint x="1325" y="210" />
+        <di:waypoint x="1375" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="1475" y="210" />
+        <di:waypoint x="1557" y="210" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_engineering_2_di" bpmnElement="lane_engineering_2" isHorizontal="true"><dc:Bounds x="-3.0" y="310.0" width="2288.0" height="620.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_review_hr_notes_12_di" bpmnElement="task_review_hr_notes_12">
+        <dc:Bounds x="175.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_invite_tech_interview_13_di" bpmnElement="task_invite_tech_interview_13">
+        <dc:Bounds x="325.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_conduct_first_tech_interview_14_di" bpmnElement="task_conduct_first_tech_interview_14">
+        <dc:Bounds x="475.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_log_technical_feedback_15_di" bpmnElement="task_log_technical_feedback_15">
+        <dc:Bounds x="625.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_first_interview_pass_16_di" bpmnElement="exclusiveGateway_first_interview_pass_16" isMarkerVisible="true">
+        <dc:Bounds x="800.0" y="385.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_reject_candidate_17_di" bpmnElement="task_reject_candidate_17">
+        <dc:Bounds x="925.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_initiate_interview_loop_18_di" bpmnElement="task_initiate_interview_loop_18">
+        <dc:Bounds x="925.0" y="510.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_interview_panel_19_di" bpmnElement="task_interview_panel_19">
+        <dc:Bounds x="1075.0" y="510.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_panel_score_candidate_20_di" bpmnElement="task_panel_score_candidate_20">
+        <dc:Bounds x="1225.0" y="510.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_panel_decision_21_di" bpmnElement="exclusiveGateway_panel_decision_21" isMarkerVisible="true">
+        <dc:Bounds x="1400.0" y="525.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_schedule_additional_interview_22_di" bpmnElement="task_schedule_additional_interview_22">
+        <dc:Bounds x="1525.0" y="510.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_reject_candidate_panel_23_di" bpmnElement="task_reject_candidate_panel_23">
+        <dc:Bounds x="1525.0" y="650.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_confirm_finalist_24_di" bpmnElement="task_confirm_finalist_24">
+        <dc:Bounds x="1525.0" y="790.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_schedule_director_interview_25_di" bpmnElement="task_schedule_director_interview_25">
+        <dc:Bounds x="1675.0" y="790.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_conduct_director_interview_26_di" bpmnElement="task_conduct_director_interview_26">
+        <dc:Bounds x="1825.0" y="790.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_director_decision_27_di" bpmnElement="exclusiveGateway_director_decision_27" isMarkerVisible="true">
+        <dc:Bounds x="2000.0" y="805.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_reject_candidate_director_28_di" bpmnElement="task_reject_candidate_director_28">
+        <dc:Bounds x="2125.0" y="790.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_review_notes_to_invite_tech_13_di" bpmnElement="flow_review_notes_to_invite_tech_13">
+        <di:waypoint x="275.0" y="410.0" />
+        <di:waypoint x="325.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_invite_tech_to_conduct_first_14_di" bpmnElement="flow_invite_tech_to_conduct_first_14">
+        <di:waypoint x="425.0" y="410.0" />
+        <di:waypoint x="475.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_conduct_first_to_log_feedback_15_di" bpmnElement="flow_conduct_first_to_log_feedback_15">
+        <di:waypoint x="575.0" y="410.0" />
+        <di:waypoint x="625.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_log_feedback_to_first_interview_pass_16_di" bpmnElement="flow_log_feedback_to_first_interview_pass_16">
+        <di:waypoint x="725.0" y="410.0" />
+        <di:waypoint x="800.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_first_interview_pass_to_reject_candidate_17_di" bpmnElement="flow_first_interview_pass_to_reject_candidate_17">
+        <di:waypoint x="850.0" y="410.0" />
+        <di:waypoint x="925.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_first_interview_pass_to_initiate_loop_18_di" bpmnElement="flow_first_interview_pass_to_initiate_loop_18">
+        <di:waypoint x="825.0" y="435.0" />
+        <di:waypoint x="825.0" y="550.0" />
+        <di:waypoint x="925.0" y="550.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="1025.0" y="410.0" />
+        <di:waypoint x="1107.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_initiate_loop_to_panel_interview_19_di" bpmnElement="flow_initiate_loop_to_panel_interview_19">
+        <di:waypoint x="1025.0" y="550.0" />
+        <di:waypoint x="1075.0" y="550.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_panel_interview_to_panel_score_20_di" bpmnElement="flow_panel_interview_to_panel_score_20">
+        <di:waypoint x="1175.0" y="550.0" />
+        <di:waypoint x="1225.0" y="550.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_panel_score_to_panel_decision_21_di" bpmnElement="flow_panel_score_to_panel_decision_21">
+        <di:waypoint x="1325.0" y="550.0" />
+        <di:waypoint x="1400.0" y="550.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_panel_decision_to_schedule_additional_22_di" bpmnElement="flow_panel_decision_to_schedule_additional_22">
+        <di:waypoint x="1450.0" y="550.0" />
+        <di:waypoint x="1525.0" y="550.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_panel_decision_to_reject_candidate_panel_23_di" bpmnElement="flow_panel_decision_to_reject_candidate_panel_23">
+        <di:waypoint x="1425.0" y="575.0" />
+        <di:waypoint x="1425.0" y="690.0" />
+        <di:waypoint x="1525.0" y="690.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_panel_decision_to_confirm_finalist_24_di" bpmnElement="flow_panel_decision_to_confirm_finalist_24">
+        <di:waypoint x="1425.0" y="575.0" />
+        <di:waypoint x="1425.0" y="830.0" />
+        <di:waypoint x="1525.0" y="830.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_schedule_additional_to_panel_interview_23_di" bpmnElement="flow_schedule_additional_to_panel_interview_23">
+        <di:waypoint x="1575.0" y="590.0" />
+        <di:waypoint x="1575.0" y="620.0" />
+        <di:waypoint x="1125.0" y="620.0" />
+        <di:waypoint x="1125.0" y="590.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="1575.0" y="730.0" />
+        <di:waypoint x="1575.0" y="760.0" />
+        <di:waypoint x="1125.0" y="760.0" />
+        <di:waypoint x="1125.0" y="428.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_confirm_finalist_to_schedule_director_25_di" bpmnElement="flow_confirm_finalist_to_schedule_director_25">
+        <di:waypoint x="1625.0" y="830.0" />
+        <di:waypoint x="1675.0" y="830.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_schedule_director_to_conduct_director_26_di" bpmnElement="flow_schedule_director_to_conduct_director_26">
+        <di:waypoint x="1775.0" y="830.0" />
+        <di:waypoint x="1825.0" y="830.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_conduct_director_to_director_decision_27_di" bpmnElement="flow_conduct_director_to_director_decision_27">
+        <di:waypoint x="1925.0" y="830.0" />
+        <di:waypoint x="2000.0" y="830.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_director_decision_to_reject_candidate_director_28_di" bpmnElement="flow_director_decision_to_reject_candidate_director_28">
+        <di:waypoint x="2050.0" y="830.0" />
+        <di:waypoint x="2125.0" y="830.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="2175.0" y="870.0" />
+        <di:waypoint x="2175.0" y="900.0" />
+        <di:waypoint x="1125.0" y="900.0" />
+        <di:waypoint x="1125.0" y="428.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_offer_onboarding_3_di" bpmnElement="lane_offer_onboarding_3" isHorizontal="true"><dc:Bounds x="-3.0" y="930.0" width="2288.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_prepare_offer_29_di" bpmnElement="task_prepare_offer_29">
+        <dc:Bounds x="175.0" y="990.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_approve_offer_package_30_di" bpmnElement="task_approve_offer_package_30">
+        <dc:Bounds x="325.0" y="990.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_generate_offer_letter_31_di" bpmnElement="task_generate_offer_letter_31">
+        <dc:Bounds x="475.0" y="990.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_present_offer_32_di" bpmnElement="task_present_offer_32">
+        <dc:Bounds x="625.0" y="990.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_candidate_decision_33_di" bpmnElement="exclusiveGateway_candidate_decision_33" isMarkerVisible="true">
+        <dc:Bounds x="800.0" y="1005.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_negotiate_offer_34_di" bpmnElement="task_negotiate_offer_34">
+        <dc:Bounds x="925.0" y="990.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_negotiation_outcome_35_di" bpmnElement="exclusiveGateway_negotiation_outcome_35" isMarkerVisible="true">
+        <dc:Bounds x="1100.0" y="1005.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_preonboarding_37_di" bpmnElement="task_preonboarding_37">
+        <dc:Bounds x="1225.0" y="990.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_event_hiring_complete_38_di" bpmnElement="end_event_hiring_complete_38">
+        <dc:Bounds x="1407.0" y="1012.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_reject_candidate_offer_36_di" bpmnElement="task_reject_candidate_offer_36">
+        <dc:Bounds x="1225.0" y="1130.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_prepare_offer_to_approve_offer_30_di" bpmnElement="flow_prepare_offer_to_approve_offer_30">
+        <di:waypoint x="275.0" y="1030.0" />
+        <di:waypoint x="325.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_approve_offer_to_generate_offer_31_di" bpmnElement="flow_approve_offer_to_generate_offer_31">
+        <di:waypoint x="425.0" y="1030.0" />
+        <di:waypoint x="475.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_generate_offer_to_present_offer_32_di" bpmnElement="flow_generate_offer_to_present_offer_32">
+        <di:waypoint x="575.0" y="1030.0" />
+        <di:waypoint x="625.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_present_offer_to_candidate_decision_33_di" bpmnElement="flow_present_offer_to_candidate_decision_33">
+        <di:waypoint x="725.0" y="1030.0" />
+        <di:waypoint x="800.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_candidate_decision_to_negotiate_offer_34_di" bpmnElement="flow_candidate_decision_to_negotiate_offer_34">
+        <di:waypoint x="850.0" y="1030.0" />
+        <di:waypoint x="925.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_candidate_decision_to_preonboarding_35_di" bpmnElement="flow_candidate_decision_to_preonboarding_35">
+        <di:waypoint x="825.0" y="1055.0" />
+        <di:waypoint x="825.0" y="1100.0" />
+        <di:waypoint x="1275.0" y="1100.0" />
+        <di:waypoint x="1275.0" y="1070.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_candidate_decision_to_reject_candidate_offer_36_di" bpmnElement="flow_candidate_decision_to_reject_candidate_offer_36">
+        <di:waypoint x="825.0" y="1055.0" />
+        <di:waypoint x="825.0" y="1170.0" />
+        <di:waypoint x="1225.0" y="1170.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_negotiate_offer_to_negotiation_outcome_36_di" bpmnElement="flow_negotiate_offer_to_negotiation_outcome_36">
+        <di:waypoint x="1025.0" y="1030.0" />
+        <di:waypoint x="1100.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_negotiation_outcome_to_preonboarding_37_di" bpmnElement="flow_negotiation_outcome_to_preonboarding_37">
+        <di:waypoint x="1150.0" y="1030.0" />
+        <di:waypoint x="1225.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_negotiation_outcome_to_reject_candidate_offer_38_di" bpmnElement="flow_negotiation_outcome_to_reject_candidate_offer_38">
+        <di:waypoint x="1125.0" y="1055.0" />
+        <di:waypoint x="1125.0" y="1170.0" />
+        <di:waypoint x="1225.0" y="1170.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_preonboarding_to_end_event_39_di" bpmnElement="flow_preonboarding_to_end_event_39">
+        <di:waypoint x="1325.0" y="1030.0" />
+        <di:waypoint x="1407.0" y="1030.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="flow_forward_candidate_to_review_notes_12_di" bpmnElement="flow_forward_candidate_to_review_notes_12"><di:waypoint x="1425" y="250" /><di:waypoint x="225" y="370" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_director_decision_to_prepare_offer_29_di" bpmnElement="flow_director_decision_to_prepare_offer_29"><di:waypoint x="2025" y="855" /><di:waypoint x="225" y="990" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

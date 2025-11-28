@@ -23,7 +23,6 @@ Instructions:
 Rules:
 - Every element must have a unique `id` (use format: `elementType_shortName_number`, e.g., `task_submit_form_1`)
 - Every process needs at least ONE startEvent and ONE endEvent
-- Gateways that diverge (split) should have a corresponding gateway that converges (merge)
 - Task names should be verb + noun (e.g., "Review application", not "Application review")
 - Use ONLY ONE pool - represent all process steps within it
 - Use ONLY sequence flows - NO message flows
@@ -49,7 +48,8 @@ Respond ONLY with valid JSON following the schema below. Do not include any mark
                 "id": "string (unique identifier)",
                 "type": "startEvent|endEvent|task|exclusiveGateway|inclusiveGateway|parallelGateway|intermediateEvent",
                 "name": "string (short, action-based for tasks)",
-                "eventType": "string (for events: none|message|timer|error|conditional)"
+                "eventType": "string (for events: none|message|timer|error|conditional)"'
+                "gatewayDirection": "string (for gateways: diverging|converging)
               }},
             ]
           }}

@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Company" processRef="software_purchase_approval" /></bpmn:collaboration><bpmn:process id="software_purchase_approval" name="Software Purchase Approval Workflow" isExecutable="false">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_requester_1" name="Requester">
+        <bpmn:flowNodeRef>start_event_submit_request_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_complete_form_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_department_manager_2" name="Department Manager">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_review_request_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusive_gateway_manager_approval_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_finance_team_3" name="Finance Team">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_verify_budget_5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusive_gateway_finance_approval_6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_process_endings_4" name="Process Endings">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_event_approved_7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>end_event_rejected_8</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="start_event_submit_request_1" name="Submit purchase request">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_complete_form_2" name="Complete purchase form">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="start_event_submit_request_1" targetRef="task_complete_form_2" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_complete_form_2" targetRef="mock_end_event" />
+  <bpmn:task id="task_review_request_3" name="Review purchase request">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusive_gateway_manager_approval_4" name="Manager approval?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow_3" sourceRef="task_review_request_3" targetRef="exclusive_gateway_manager_approval_4" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="exclusive_gateway_manager_approval_4" targetRef="mock_end_event" />
+  <bpmn:task id="task_verify_budget_5" name="Verify budget availability">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusive_gateway_finance_approval_6" name="Finance approval?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow_5" sourceRef="task_verify_budget_5" targetRef="exclusive_gateway_finance_approval_6" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="exclusive_gateway_finance_approval_6" targetRef="mock_end_event" />
+  <bpmn:endEvent id="end_event_approved_7" name="Purchase approved">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="end_event_rejected_8" name="Purchase rejected" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="task_complete_form_2" targetRef="task_review_request_3" /><bpmn:sequenceFlow id="flow_4_yes" sourceRef="exclusive_gateway_manager_approval_4" targetRef="task_verify_budget_5" /><bpmn:sequenceFlow id="flow_4_no" sourceRef="exclusive_gateway_manager_approval_4" targetRef="end_event_rejected_8" /><bpmn:sequenceFlow id="flow_6_yes" sourceRef="exclusive_gateway_finance_approval_6" targetRef="end_event_approved_7" /><bpmn:sequenceFlow id="flow_6_no" sourceRef="exclusive_gateway_finance_approval_6" targetRef="end_event_rejected_8" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_software_purchase_approval">
+    <bpmndi:BPMNPlane id="BPMNPlane_software_purchase_approval" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="636" height="896" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_requester_1_di" bpmnElement="lane_requester_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="606.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="start_event_submit_request_1_di" bpmnElement="start_event_submit_request_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_complete_form_2_di" bpmnElement="task_complete_form_2">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="357" y="70" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_department_manager_2_di" bpmnElement="lane_department_manager_2" isHorizontal="true"><dc:Bounds x="-3.0" y="170.0" width="606.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_review_request_3_di" bpmnElement="task_review_request_3">
+        <dc:Bounds x="175.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusive_gateway_manager_approval_4_di" bpmnElement="exclusive_gateway_manager_approval_4" isMarkerVisible="true">
+        <dc:Bounds x="350.0" y="245.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="275.0" y="270.0" />
+        <di:waypoint x="350.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="400.0" y="270.0" />
+        <di:waypoint x="507.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_finance_team_3_di" bpmnElement="lane_finance_team_3" isHorizontal="true"><dc:Bounds x="-3.0" y="370.0" width="606.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_verify_budget_5_di" bpmnElement="task_verify_budget_5">
+        <dc:Bounds x="175.0" y="430.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusive_gateway_finance_approval_6_di" bpmnElement="exclusive_gateway_finance_approval_6" isMarkerVisible="true">
+        <dc:Bounds x="350.0" y="445.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="275.0" y="470.0" />
+        <di:waypoint x="350.0" y="470.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="400.0" y="470.0" />
+        <di:waypoint x="507.0" y="470.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_process_endings_4_di" bpmnElement="lane_process_endings_4" isHorizontal="true"><dc:Bounds x="-3.0" y="570.0" width="606.0" height="296.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="end_event_approved_7_di" bpmnElement="end_event_approved_7">
+        <dc:Bounds x="207.0" y="630.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_event_rejected_8_di" bpmnElement="end_event_rejected_8">
+        <dc:Bounds x="57.0" y="770.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2"><di:waypoint x="225" y="110" /><di:waypoint x="225" y="230" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_4_yes_di" bpmnElement="flow_4_yes"><di:waypoint x="375" y="295" /><di:waypoint x="225" y="430" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_4_no_di" bpmnElement="flow_4_no"><di:waypoint x="375" y="295" /><di:waypoint x="75" y="770" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_6_yes_di" bpmnElement="flow_6_yes"><di:waypoint x="375" y="495" /><di:waypoint x="225" y="630" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_6_no_di" bpmnElement="flow_6_no"><di:waypoint x="375" y="495" /><di:waypoint x="75" y="770" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

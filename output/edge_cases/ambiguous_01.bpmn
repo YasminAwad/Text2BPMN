@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="Operations Team" processRef="issue_management_process" /></bpmn:collaboration><bpmn:process id="issue_management_process" name="Operations Issue Management Process" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_team_member_1" name="Team Member">
+        <bpmn:flowNodeRef>startEvent_issue_detected_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_report_issue_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_investigate_issue_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_issue_resolved_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_apply_solution_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_process_completed_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_escalate_issue_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_issue_escalated_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_issue_detected_1" name="Detect Issue">
+      <bpmn:outgoing>flow_start_to_report_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_report_issue_1" name="Report Issue">
+      <bpmn:incoming>flow_start_to_report_1</bpmn:incoming>
+      <bpmn:outgoing>flow_report_to_investigate_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_investigate_issue_1" name="Investigate Issue">
+      <bpmn:incoming>flow_report_to_investigate_1</bpmn:incoming>
+      <bpmn:outgoing>flow_investigate_to_gateway_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_issue_resolved_1" name="Issue Resolved?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_investigate_to_gateway_1</bpmn:incoming>
+      <bpmn:outgoing>flow_gateway_to_solution_1</bpmn:outgoing>
+      <bpmn:outgoing>flow_gateway_to_escalate_1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_apply_solution_1" name="Apply Solution">
+      <bpmn:incoming>flow_gateway_to_solution_1</bpmn:incoming>
+      <bpmn:outgoing>flow_solution_to_end_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_process_completed_1" name="Process Completed">
+      <bpmn:incoming>flow_solution_to_end_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="task_escalate_issue_1" name="Escalate Issue">
+      <bpmn:incoming>flow_gateway_to_escalate_1</bpmn:incoming>
+      <bpmn:outgoing>flow_escalate_to_end_1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_issue_escalated_1" name="Issue Escalated">
+      <bpmn:incoming>flow_escalate_to_end_1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_start_to_report_1" sourceRef="startEvent_issue_detected_1" targetRef="task_report_issue_1" />
+    <bpmn:sequenceFlow id="flow_report_to_investigate_1" sourceRef="task_report_issue_1" targetRef="task_investigate_issue_1" />
+    <bpmn:sequenceFlow id="flow_investigate_to_gateway_1" sourceRef="task_investigate_issue_1" targetRef="exclusiveGateway_issue_resolved_1" />
+    <bpmn:sequenceFlow id="flow_gateway_to_solution_1" sourceRef="exclusiveGateway_issue_resolved_1" targetRef="task_apply_solution_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">issue resolved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_solution_to_end_1" sourceRef="task_apply_solution_1" targetRef="endEvent_process_completed_1" />
+    <bpmn:sequenceFlow id="flow_gateway_to_escalate_1" sourceRef="exclusiveGateway_issue_resolved_1" targetRef="task_escalate_issue_1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">issue not resolved</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_escalate_to_end_1" sourceRef="task_escalate_issue_1" targetRef="endEvent_issue_escalated_1" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_issue_management_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_issue_management_process" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="936" height="340" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_team_member_1_di" bpmnElement="lane_team_member_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="906.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_issue_detected_1_di" bpmnElement="startEvent_issue_detected_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_report_issue_1_di" bpmnElement="task_report_issue_1">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_investigate_issue_1_di" bpmnElement="task_investigate_issue_1">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_issue_resolved_1_di" bpmnElement="exclusiveGateway_issue_resolved_1" isMarkerVisible="true">
+        <dc:Bounds x="500" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_apply_solution_1_di" bpmnElement="task_apply_solution_1">
+        <dc:Bounds x="625" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_process_completed_1_di" bpmnElement="endEvent_process_completed_1">
+        <dc:Bounds x="807" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_escalate_issue_1_di" bpmnElement="task_escalate_issue_1">
+        <dc:Bounds x="625" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_issue_escalated_1_di" bpmnElement="endEvent_issue_escalated_1">
+        <dc:Bounds x="807" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_start_to_report_1_di" bpmnElement="flow_start_to_report_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_report_to_investigate_1_di" bpmnElement="flow_report_to_investigate_1">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_investigate_to_gateway_1_di" bpmnElement="flow_investigate_to_gateway_1">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="500" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_to_solution_1_di" bpmnElement="flow_gateway_to_solution_1">
+        <di:waypoint x="550" y="70" />
+        <di:waypoint x="625" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_gateway_to_escalate_1_di" bpmnElement="flow_gateway_to_escalate_1">
+        <di:waypoint x="525" y="95" />
+        <di:waypoint x="525" y="210" />
+        <di:waypoint x="625" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_solution_to_end_1_di" bpmnElement="flow_solution_to_end_1">
+        <di:waypoint x="725" y="70" />
+        <di:waypoint x="807" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_escalate_to_end_1_di" bpmnElement="flow_escalate_to_end_1">
+        <di:waypoint x="725" y="210" />
+        <di:waypoint x="807" y="210" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,483 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns1="http://camunda.org/schema/modeler/1.0" xmlns:ns2="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_01p3jf9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2" ns1:executionPlatform="Camunda Cloud" ns1:executionPlatformVersion="8.0.0" ns2:diagramRelationId="a0d0615c-3547-410d-a6d0-e0f5f7c190e8">
+  <bpmn:collaboration id="bpmnElement_of_the_Plane_1"><bpmn:participant id="process_participant_1" name="E-Commerce Company" processRef="product_return_online_purchase" /></bpmn:collaboration><bpmn:process id="product_return_online_purchase" name="Product Return Process for Online Purchase" isExecutable="true">
+    <bpmn:laneSet id="laneSet_1">
+      <bpmn:lane id="lane_customer_1" name="Customer">
+        <bpmn:flowNodeRef>startEvent_initiate_return_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_request_return_2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_select_items_to_return_5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_enter_return_reason_3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_upload_photos_4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_choose_return_method_6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_prepare_shipment_7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_ship_return_item_8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>intermediateEvent_wait_14_days_9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_system_2" name="Automated System">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_mark_return_initiated_10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_validate_return_window_11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_return_window_check_12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_rejected_out_of_window_13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_validate_category_restriction_14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_category_check_15</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_rejected_category_16</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_validate_condition_17</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_manual_review_needed_18</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_generate_rma_19</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>intermediateEvent_return_in_transit_20</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_abandoned_return_21</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_support_agent_3" name="Support Team">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_review_return_request_22</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_support_approve_23</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_rejected_by_support_24</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_warehouse_4" name="Warehouse">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_receive_package_25</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_inspect_item_26</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_inspection_outcome_27</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_return_rejected_inspection_28</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_partial_acceptance_29</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_finance_5" name="Finance Team / Refund Engine">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>parallelGateway_refund_or_exchange_30</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_process_refund_31</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_check_exchange_stock_32</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exclusiveGateway_exchange_stock_33</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_ship_replacement_34</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>mock_end_event</bpmn:flowNodeRef>
+      </bpmn:lane>
+    <bpmn:lane id="lane_closure_6" name="Closure">
+        <bpmn:flowNodeRef>mock_start_event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task_notify_customer_35</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>endEvent_process_completed_36</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="startEvent_initiate_return_1" name="Initiate Return">
+      <bpmn:outgoing>flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="task_request_return_2" name="Request Return">
+      <bpmn:incoming>flow_1</bpmn:incoming>
+      <bpmn:outgoing>flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_select_items_to_return_5" name="Select Items to Return">
+      <bpmn:incoming>flow_2</bpmn:incoming>
+      <bpmn:outgoing>flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_enter_return_reason_3" name="Enter Return Reason">
+      <bpmn:incoming>flow_3</bpmn:incoming>
+      <bpmn:outgoing>flow_4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_upload_photos_4" name="Upload Photos">
+      <bpmn:incoming>flow_4</bpmn:incoming>
+      <bpmn:outgoing>flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_choose_return_method_6" name="Choose Return Method">
+      <bpmn:incoming>flow_5</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_prepare_shipment_7" name="Prepare Shipment">
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:outgoing>flow_17</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_ship_return_item_8" name="Ship Return Item">
+      <bpmn:incoming>flow_17</bpmn:incoming>
+      <bpmn:outgoing>flow_18</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="intermediateEvent_wait_14_days_9" name="Wait for Shipment (14 days)">
+      <bpmn:incoming>flow_18</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+      <bpmn:timerEventDefinition />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="flow_1" sourceRef="startEvent_initiate_return_1" targetRef="task_request_return_2" />
+    <bpmn:sequenceFlow id="flow_2" sourceRef="task_request_return_2" targetRef="task_select_items_to_return_5" />
+    <bpmn:sequenceFlow id="flow_3" sourceRef="task_select_items_to_return_5" targetRef="task_enter_return_reason_3" />
+    <bpmn:sequenceFlow id="flow_4" sourceRef="task_enter_return_reason_3" targetRef="task_upload_photos_4" />
+    <bpmn:sequenceFlow id="flow_5" sourceRef="task_upload_photos_4" targetRef="task_choose_return_method_6" />
+    <bpmn:sequenceFlow id="flow_6" sourceRef="task_choose_return_method_6" targetRef="task_prepare_shipment_7" />
+    <bpmn:sequenceFlow id="flow_17" sourceRef="task_prepare_shipment_7" targetRef="task_ship_return_item_8" />
+    <bpmn:sequenceFlow id="flow_18" sourceRef="task_ship_return_item_8" targetRef="intermediateEvent_wait_14_days_9" />
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="intermediateEvent_wait_14_days_9" targetRef="mock_end_event" />
+  <bpmn:task id="task_mark_return_initiated_10" name="Mark Return Initiated">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_validate_return_window_11" name="Validate Return Window">
+      <bpmn:incoming>flow_6</bpmn:incoming>
+      <bpmn:outgoing>flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_return_window_check_12" name="Return Window Valid?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_7</bpmn:incoming>
+      <bpmn:outgoing>flow_8_yes</bpmn:outgoing>
+      <bpmn:outgoing>flow_8_no</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_rejected_out_of_window_13" name="Return Rejected (Out of Window)">
+      <bpmn:incoming>flow_8_no</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="task_validate_category_restriction_14" name="Validate Category Restriction">
+      <bpmn:incoming>flow_8_yes</bpmn:incoming>
+      <bpmn:outgoing>flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_category_check_15" name="Category Restricted?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_9</bpmn:incoming>
+      <bpmn:outgoing>flow_10_yes</bpmn:outgoing>
+      <bpmn:outgoing>flow_10_no</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_rejected_category_16" name="Return Rejected (Category)">
+      <bpmn:incoming>flow_10_no</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="task_validate_condition_17" name="Validate Item Condition">
+      <bpmn:incoming>flow_10_yes</bpmn:incoming>
+      <bpmn:outgoing>flow_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_manual_review_needed_18" name="Manual Review Needed?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_11</bpmn:incoming>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_generate_rma_19" name="Generate RMA and Instructions" />
+    <bpmn:intermediateCatchEvent id="intermediateEvent_return_in_transit_20" name="Return In Transit">
+      <bpmn:messageEventDefinition id="messageEventDef_return_in_transit_20" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="endEvent_abandoned_return_21" name="Return Abandoned" />
+    <bpmn:sequenceFlow id="flow_6" sourceRef="task_mark_return_initiated_10" targetRef="task_validate_return_window_11" />
+    <bpmn:sequenceFlow id="flow_7" sourceRef="task_validate_return_window_11" targetRef="exclusiveGateway_return_window_check_12" />
+    <bpmn:sequenceFlow id="flow_8_yes" sourceRef="exclusiveGateway_return_window_check_12" targetRef="task_validate_category_restriction_14">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_8_no" sourceRef="exclusiveGateway_return_window_check_12" targetRef="endEvent_rejected_out_of_window_13">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_9" sourceRef="task_validate_category_restriction_14" targetRef="exclusiveGateway_category_check_15" />
+    <bpmn:sequenceFlow id="flow_10_yes" sourceRef="exclusiveGateway_category_check_15" targetRef="task_validate_condition_17">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_10_no" sourceRef="exclusiveGateway_category_check_15" targetRef="endEvent_rejected_category_16">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_11" sourceRef="task_validate_condition_17" targetRef="exclusiveGateway_manual_review_needed_18" />
+  <bpmn:task id="task_review_return_request_22" name="Review Return Request">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_support_approve_23" name="Support Approves?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_13</bpmn:incoming>
+      <bpmn:outgoing>flow_14_no</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_rejected_by_support_24" name="Return Rejected (Support)">
+      <bpmn:incoming>flow_14_no</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_13" sourceRef="task_review_return_request_22" targetRef="exclusiveGateway_support_approve_23" />
+    <bpmn:sequenceFlow id="flow_14_no" sourceRef="exclusiveGateway_support_approve_23" targetRef="endEvent_rejected_by_support_24">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  <bpmn:task id="task_receive_package_25" name="Receive Package">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_20</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task_inspect_item_26" name="Inspect Item">
+      <bpmn:incoming>flow_20</bpmn:incoming>
+      <bpmn:outgoing>flow_21</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_inspection_outcome_27" name="Inspection Passed?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_21</bpmn:incoming>
+      <bpmn:outgoing>flow_22_no</bpmn:outgoing>
+      <bpmn:outgoing>flow_22_partial</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="endEvent_return_rejected_inspection_28" name="Return Rejected (Inspection)">
+      <bpmn:incoming>flow_22_no</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="task_partial_acceptance_29" name="Partial Acceptance Handling">
+      <bpmn:incoming>flow_22_partial</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_20" sourceRef="task_receive_package_25" targetRef="task_inspect_item_26" />
+    <bpmn:sequenceFlow id="flow_21" sourceRef="task_inspect_item_26" targetRef="exclusiveGateway_inspection_outcome_27" />
+    <bpmn:sequenceFlow id="flow_22_no" sourceRef="exclusiveGateway_inspection_outcome_27" targetRef="endEvent_return_rejected_inspection_28">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_22_partial" sourceRef="exclusiveGateway_inspection_outcome_27" targetRef="task_partial_acceptance_29">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">partial</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  <bpmn:parallelGateway id="parallelGateway_refund_or_exchange_30" name="Refund or Exchange?" gatewayDirection="diverging">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_24_refund</bpmn:outgoing>
+      <bpmn:outgoing>flow_24_exchange</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="task_process_refund_31" name="Process Refund">
+      <bpmn:incoming>flow_24_refund</bpmn:incoming>
+      <bpmn:incoming>flow_26_no</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:task id="task_check_exchange_stock_32" name="Check Exchange Stock">
+      <bpmn:incoming>flow_24_exchange</bpmn:incoming>
+      <bpmn:outgoing>flow_25</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="exclusiveGateway_exchange_stock_33" name="Exchange Stock Available?" gatewayDirection="diverging">
+      <bpmn:incoming>flow_25</bpmn:incoming>
+      <bpmn:outgoing>flow_26_yes</bpmn:outgoing>
+      <bpmn:outgoing>flow_26_no</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="task_ship_replacement_34" name="Ship Replacement Item">
+      <bpmn:incoming>flow_26_yes</bpmn:incoming>
+      <bpmn:outgoing>end_event_flow</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="flow_24_refund" sourceRef="parallelGateway_refund_or_exchange_30" targetRef="task_process_refund_31" />
+    <bpmn:sequenceFlow id="flow_24_exchange" sourceRef="parallelGateway_refund_or_exchange_30" targetRef="task_check_exchange_stock_32" />
+    <bpmn:sequenceFlow id="flow_25" sourceRef="task_check_exchange_stock_32" targetRef="exclusiveGateway_exchange_stock_33" />
+    <bpmn:sequenceFlow id="flow_26_yes" sourceRef="exclusiveGateway_exchange_stock_33" targetRef="task_ship_replacement_34">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">yes</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow_26_no" sourceRef="exclusiveGateway_exchange_stock_33" targetRef="task_process_refund_31">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">no</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="end_event_flow" sourceRef="task_ship_replacement_34" targetRef="mock_end_event" />
+  <bpmn:task id="task_notify_customer_35" name="Notify Customer">
+      <bpmn:incoming>mock_start_event_flow</bpmn:incoming>
+      <bpmn:outgoing>flow_29</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="endEvent_process_completed_36" name="Return Process Completed">
+      <bpmn:incoming>flow_29</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="flow_29" sourceRef="task_notify_customer_35" targetRef="endEvent_process_completed_36" />
+  <bpmn:sequenceFlow id="flow_12_no" sourceRef="exclusiveGateway_manual_review_needed_18" targetRef="task_choose_return_method_6" /><bpmn:sequenceFlow id="flow_12_yes" sourceRef="exclusiveGateway_manual_review_needed_18" targetRef="task_review_return_request_22" /><bpmn:sequenceFlow id="flow_14_yes" sourceRef="exclusiveGateway_support_approve_23" targetRef="task_choose_return_method_6" /><bpmn:sequenceFlow id="flow_15" sourceRef="task_choose_return_method_6" targetRef="task_generate_rma_19" /><bpmn:sequenceFlow id="flow_16" sourceRef="task_generate_rma_19" targetRef="task_prepare_shipment_7" /><bpmn:sequenceFlow id="flow_19" sourceRef="intermediateEvent_return_in_transit_20" targetRef="task_receive_package_25" /><bpmn:sequenceFlow id="flow_22_yes" sourceRef="exclusiveGateway_inspection_outcome_27" targetRef="parallelGateway_refund_or_exchange_30" /><bpmn:sequenceFlow id="flow_23" sourceRef="task_partial_acceptance_29" targetRef="parallelGateway_refund_or_exchange_30" /><bpmn:sequenceFlow id="flow_27" sourceRef="task_process_refund_31" targetRef="task_notify_customer_35" /><bpmn:sequenceFlow id="flow_28" sourceRef="task_ship_replacement_34" targetRef="task_notify_customer_35" /><bpmn:sequenceFlow id="flow_30" sourceRef="task_generate_rma_19" targetRef="intermediateEvent_wait_14_days_9" /><bpmn:sequenceFlow id="flow_31_timeout" sourceRef="intermediateEvent_wait_14_days_9" targetRef="endEvent_abandoned_return_21" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_product_return_online_purchase">
+    <bpmndi:BPMNPlane id="BPMNPlane_product_return_online_purchase" bpmnElement="bpmnElement_of_the_Plane_1">
+      <bpmndi:BPMNShape id="participant_shape_1" bpmnElement="process_participant_1" isHorizontal="true"><dc:Bounds x="-33" y="-30" width="1536" height="1878" /><bpmndi:BPMNLabel /></bpmndi:BPMNShape><bpmndi:BPMNShape id="lane_customer_1_di" bpmnElement="lane_customer_1" isHorizontal="true"><dc:Bounds x="-3.0" y="-30.0" width="1506.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="startEvent_initiate_return_1_di" bpmnElement="startEvent_initiate_return_1">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_request_return_2_di" bpmnElement="task_request_return_2">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_select_items_to_return_5_di" bpmnElement="task_select_items_to_return_5">
+        <dc:Bounds x="325" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_enter_return_reason_3_di" bpmnElement="task_enter_return_reason_3">
+        <dc:Bounds x="475" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_upload_photos_4_di" bpmnElement="task_upload_photos_4">
+        <dc:Bounds x="625" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_choose_return_method_6_di" bpmnElement="task_choose_return_method_6">
+        <dc:Bounds x="775" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_prepare_shipment_7_di" bpmnElement="task_prepare_shipment_7">
+        <dc:Bounds x="925" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_ship_return_item_8_di" bpmnElement="task_ship_return_item_8">
+        <dc:Bounds x="1075" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="intermediateEvent_wait_14_days_9_di" bpmnElement="intermediateEvent_wait_14_days_9">
+        <dc:Bounds x="1257" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_1_di" bpmnElement="flow_1">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_2_di" bpmnElement="flow_2">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="325" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_3_di" bpmnElement="flow_3">
+        <di:waypoint x="425" y="70" />
+        <di:waypoint x="475" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_4_di" bpmnElement="flow_4">
+        <di:waypoint x="575" y="70" />
+        <di:waypoint x="625" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_5_di" bpmnElement="flow_5">
+        <di:waypoint x="725" y="70" />
+        <di:waypoint x="775" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="875" y="70" />
+        <di:waypoint x="925" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_17_di" bpmnElement="flow_17">
+        <di:waypoint x="1025" y="70" />
+        <di:waypoint x="1075" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_18_di" bpmnElement="flow_18">
+        <di:waypoint x="1175" y="70" />
+        <di:waypoint x="1257" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="1293" y="70" />
+        <di:waypoint x="1407" y="70" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_system_2_di" bpmnElement="lane_system_2" isHorizontal="true"><dc:Bounds x="-3.0" y="170.0" width="1506.0" height="598.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_mark_return_initiated_10_di" bpmnElement="task_mark_return_initiated_10">
+        <dc:Bounds x="207.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_validate_return_window_11_di" bpmnElement="task_validate_return_window_11">
+        <dc:Bounds x="357.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_return_window_check_12_di" bpmnElement="exclusiveGateway_return_window_check_12" isMarkerVisible="true">
+        <dc:Bounds x="532.0" y="245.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_validate_category_restriction_14_di" bpmnElement="task_validate_category_restriction_14">
+        <dc:Bounds x="657.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_category_check_15_di" bpmnElement="exclusiveGateway_category_check_15" isMarkerVisible="true">
+        <dc:Bounds x="832.0" y="245.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_validate_condition_17_di" bpmnElement="task_validate_condition_17">
+        <dc:Bounds x="957.0" y="230.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_manual_review_needed_18_di" bpmnElement="exclusiveGateway_manual_review_needed_18" isMarkerVisible="true">
+        <dc:Bounds x="1132.0" y="245.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_generate_rma_19_di" bpmnElement="task_generate_rma_19">
+        <dc:Bounds x="57.0" y="370.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_rejected_out_of_window_13_di" bpmnElement="endEvent_rejected_out_of_window_13">
+        <dc:Bounds x="689.0" y="392.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_rejected_category_16_di" bpmnElement="endEvent_rejected_category_16">
+        <dc:Bounds x="989.0" y="392.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="intermediateEvent_return_in_transit_20_di" bpmnElement="intermediateEvent_return_in_transit_20">
+        <dc:Bounds x="89.0" y="532.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_abandoned_return_21_di" bpmnElement="endEvent_abandoned_return_21">
+        <dc:Bounds x="89.0" y="672.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_6_di" bpmnElement="flow_6">
+        <di:waypoint x="307.0" y="270.0" />
+        <di:waypoint x="357.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_7_di" bpmnElement="flow_7">
+        <di:waypoint x="457.0" y="270.0" />
+        <di:waypoint x="532.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_8_yes_di" bpmnElement="flow_8_yes">
+        <di:waypoint x="582.0" y="270.0" />
+        <di:waypoint x="657.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_8_no_di" bpmnElement="flow_8_no">
+        <di:waypoint x="557.0" y="295.0" />
+        <di:waypoint x="557.0" y="410.0" />
+        <di:waypoint x="689.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_9_di" bpmnElement="flow_9">
+        <di:waypoint x="757.0" y="270.0" />
+        <di:waypoint x="832.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_10_yes_di" bpmnElement="flow_10_yes">
+        <di:waypoint x="882.0" y="270.0" />
+        <di:waypoint x="957.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_10_no_di" bpmnElement="flow_10_no">
+        <di:waypoint x="857.0" y="295.0" />
+        <di:waypoint x="857.0" y="410.0" />
+        <di:waypoint x="989.0" y="410.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_11_di" bpmnElement="flow_11">
+        <di:waypoint x="1057.0" y="270.0" />
+        <di:waypoint x="1132.0" y="270.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_support_agent_3_di" bpmnElement="lane_support_agent_3" isHorizontal="true"><dc:Bounds x="-3.0" y="768.0" width="1506.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_review_return_request_22_di" bpmnElement="task_review_return_request_22">
+        <dc:Bounds x="175.0" y="828.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_support_approve_23_di" bpmnElement="exclusiveGateway_support_approve_23" isMarkerVisible="true">
+        <dc:Bounds x="350.0" y="843.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_rejected_by_support_24_di" bpmnElement="endEvent_rejected_by_support_24">
+        <dc:Bounds x="507.0" y="850.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_13_di" bpmnElement="flow_13">
+        <di:waypoint x="275.0" y="868.0" />
+        <di:waypoint x="350.0" y="868.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_14_no_di" bpmnElement="flow_14_no">
+        <di:waypoint x="400.0" y="868.0" />
+        <di:waypoint x="507.0" y="868.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_warehouse_4_di" bpmnElement="lane_warehouse_4" isHorizontal="true"><dc:Bounds x="-3.0" y="968.0" width="1506.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_receive_package_25_di" bpmnElement="task_receive_package_25">
+        <dc:Bounds x="175.0" y="1028.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_inspect_item_26_di" bpmnElement="task_inspect_item_26">
+        <dc:Bounds x="325.0" y="1028.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_inspection_outcome_27_di" bpmnElement="exclusiveGateway_inspection_outcome_27" isMarkerVisible="true">
+        <dc:Bounds x="500.0" y="1043.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_return_rejected_inspection_28_di" bpmnElement="endEvent_return_rejected_inspection_28">
+        <dc:Bounds x="657.0" y="1050.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_partial_acceptance_29_di" bpmnElement="task_partial_acceptance_29">
+        <dc:Bounds x="625.0" y="1168.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_20_di" bpmnElement="flow_20">
+        <di:waypoint x="275.0" y="1068.0" />
+        <di:waypoint x="325.0" y="1068.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_21_di" bpmnElement="flow_21">
+        <di:waypoint x="425.0" y="1068.0" />
+        <di:waypoint x="500.0" y="1068.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_22_no_di" bpmnElement="flow_22_no">
+        <di:waypoint x="550.0" y="1068.0" />
+        <di:waypoint x="657.0" y="1068.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_22_partial_di" bpmnElement="flow_22_partial">
+        <di:waypoint x="525.0" y="1093.0" />
+        <di:waypoint x="525.0" y="1208.0" />
+        <di:waypoint x="625.0" y="1208.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_finance_5_di" bpmnElement="lane_finance_5" isHorizontal="true"><dc:Bounds x="-3.0" y="1308.0" width="1506.0" height="340.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="parallelGateway_refund_or_exchange_30_di" bpmnElement="parallelGateway_refund_or_exchange_30">
+        <dc:Bounds x="200.0" y="1383.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_process_refund_31_di" bpmnElement="task_process_refund_31">
+        <dc:Bounds x="325.0" y="1368.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_check_exchange_stock_32_di" bpmnElement="task_check_exchange_stock_32">
+        <dc:Bounds x="325.0" y="1508.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="exclusiveGateway_exchange_stock_33_di" bpmnElement="exclusiveGateway_exchange_stock_33" isMarkerVisible="true">
+        <dc:Bounds x="500.0" y="1523.0" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="task_ship_replacement_34_di" bpmnElement="task_ship_replacement_34">
+        <dc:Bounds x="625.0" y="1508.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_24_refund_di" bpmnElement="flow_24_refund">
+        <di:waypoint x="250.0" y="1408.0" />
+        <di:waypoint x="325.0" y="1408.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_24_exchange_di" bpmnElement="flow_24_exchange">
+        <di:waypoint x="225.0" y="1433.0" />
+        <di:waypoint x="225.0" y="1548.0" />
+        <di:waypoint x="325.0" y="1548.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_25_di" bpmnElement="flow_25">
+        <di:waypoint x="425.0" y="1548.0" />
+        <di:waypoint x="500.0" y="1548.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_26_yes_di" bpmnElement="flow_26_yes">
+        <di:waypoint x="550.0" y="1548.0" />
+        <di:waypoint x="625.0" y="1548.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="flow_26_no_di" bpmnElement="flow_26_no">
+        <di:waypoint x="525.0" y="1573.0" />
+        <di:waypoint x="525.0" y="1618.0" />
+        <di:waypoint x="375.0" y="1618.0" />
+        <di:waypoint x="375.0" y="1448.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="end_event_flow_di" bpmnElement="end_event_flow">
+        <di:waypoint x="725.0" y="1548.0" />
+        <di:waypoint x="807.0" y="1548.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="lane_closure_6_di" bpmnElement="lane_closure_6" isHorizontal="true"><dc:Bounds x="-3.0" y="1648.0" width="1506.0" height="200.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape id="task_notify_customer_35_di" bpmnElement="task_notify_customer_35">
+        <dc:Bounds x="175.0" y="1708.0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="endEvent_process_completed_36_di" bpmnElement="endEvent_process_completed_36">
+        <dc:Bounds x="357.0" y="1730.0" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="flow_29_di" bpmnElement="flow_29">
+        <di:waypoint x="275.0" y="1748.0" />
+        <di:waypoint x="357.0" y="1748.0" />
+      </bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="flow_12_no_di" bpmnElement="flow_12_no"><di:waypoint x="1157" y="245" /><di:waypoint x="825" y="110" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_12_yes_di" bpmnElement="flow_12_yes"><di:waypoint x="1157" y="295" /><di:waypoint x="225" y="828" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_14_yes_di" bpmnElement="flow_14_yes"><di:waypoint x="375" y="843" /><di:waypoint x="825" y="110" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_15_di" bpmnElement="flow_15"><di:waypoint x="825" y="110" /><di:waypoint x="107" y="370" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_16_di" bpmnElement="flow_16"><di:waypoint x="107" y="370" /><di:waypoint x="975" y="110" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_19_di" bpmnElement="flow_19"><di:waypoint x="107" y="568" /><di:waypoint x="225" y="1028" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_22_yes_di" bpmnElement="flow_22_yes"><di:waypoint x="525" y="1093" /><di:waypoint x="225" y="1383" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_23_di" bpmnElement="flow_23"><di:waypoint x="675" y="1248" /><di:waypoint x="225" y="1383" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_27_di" bpmnElement="flow_27"><di:waypoint x="375" y="1448" /><di:waypoint x="225" y="1708" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_28_di" bpmnElement="flow_28"><di:waypoint x="675" y="1588" /><di:waypoint x="225" y="1708" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_30_di" bpmnElement="flow_30"><di:waypoint x="107" y="370" /><di:waypoint x="1275" y="88" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="flow_31_timeout_di" bpmnElement="flow_31_timeout"><di:waypoint x="1275" y="88" /><di:waypoint x="107" y="672" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
