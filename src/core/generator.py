@@ -35,14 +35,10 @@ class BPMNGeneratorService:
             ## STEP 1 - Generate JSON of the process with LLM
             logging.info("1. Generating JSON from LLM")
 
-            json_content = self.llm_service.call_llm("01_generate_json.txt",
-                                                     {"process_description": process_description})
-            
-            json_loaded =json.loads(json_content)
-            self._validate_bpmn_json(json_loaded)
+            process_json = self._generate_process_json(process_description, max_attempts=3)
 
-            json_bpmn = json_loaded["bpmn"]
-            reasoning = json_loaded["reasoning"]
+            json_bpmn = process_json["bpmn"]
+            reasoning = process_json["reasoning"]
             same_flow, different_flow = self._extract_all_sequence_flows(json_bpmn)
 
             ## STEP 2 - Extract lanes
@@ -114,6 +110,63 @@ class BPMNGeneratorService:
       
         except Exception as e:
             raise BPMNGenerationError(f"Failed to save BPMN file: {str(e)}")
+        
+    def _generate_process_json(self, process_description: str, max_attempts: int = 3) -> BPMNResponse:
+        """
+        Attempts to generate and validate BPMN JSON with retry logic.
+        
+        Args:
+            process_description: Description of the process
+            max_attempts: Maximum number of attempts (default: 3)
+            
+        Returns:
+            Validated BPMNResponse object\
+        """
+        last_error = None
+        
+        for attempt in range(1, max_attempts + 1):
+            try:
+                json_content = self.llm_service.call_llm(
+                    "01_generate_json.txt",
+                    {"process_description": process_description}
+                )
+                json_loaded = json.loads(json_content)
+                validated_json_response = self._validate_bpmn_json(json_loaded)
+                
+                logging.info(f"BPMN generation succeeded on attempt {attempt}")
+                return validated_json_response
+                
+            except (json.JSONDecodeError, BPMNJsonError) as e:
+                last_error = e
+                if attempt < max_attempts:
+                    logging.info(f"Attempt {attempt} failed: {e}. Retrying...")
+                else:
+                    logging.info(f"All {max_attempts} attempts failed.")
+        
+        # If we exhausted all attempts, raise the last error
+        logging.error("BPMN generation failed after maximum attempts.")
+        raise BPMNJsonError(
+            f"Failed to generate valid BPMN JSON after {max_attempts} attempts. "
+            f"Last error: {last_error}"
+        ) from last_error
+            
+    def _validate_bpmn_json(json_content: dict) -> BPMNResponse:
+        """
+        Validates and parses BPMN JSON content.
+        
+        Args:
+            json_content: Dictionary containing the BPMN structure
+            
+        Returns:
+            Validated BPMNResponse object
+            
+        Raises:
+            ValidationError: If the JSON doesn't match the expected structure
+        """
+        try:
+            return BPMNResponse(**json_content)
+        except ValidationError as e:
+            raise BPMNJsonError(f"Invalid BPMN JSON structure: {e}") from e
 
     def _extract_all_sequence_flows(self, json_bpmn: Dict) -> Tuple[Dict, Dict]: 
         """
@@ -224,23 +277,3 @@ class BPMNGeneratorService:
         if "sequenceFlows" not in lane:
             lane["sequenceFlows"] = []
         lane["sequenceFlows"].extend(flows_for_lane)
-        
-
-    # Usage example
-    def _validate_bpmn_json(json_content: dict) -> BPMNResponse:
-        """
-        Validates and parses BPMN JSON content.
-        
-        Args:
-            json_content: Dictionary containing the BPMN structure
-            
-        Returns:
-            Validated BPMNResponse object
-            
-        Raises:
-            ValidationError: If the JSON doesn't match the expected structure
-        """
-        try:
-            return BPMNResponse(**json_content)
-        except ValidationError as e:
-            raise BPMNJsonError(f"Invalid BPMN JSON structure: {e}") from e
