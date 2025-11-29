@@ -2,6 +2,8 @@
 
 A proof-of-concept command-line tool that converts natural-language process descriptions into valid BPMN 2.0 diagrams (XML .bpmn files) using a Large Language Model (GPT-4.1).
 
+Project presentation: https://yasminawad.github.io/Text2BPMN/
+
 ## Set up
 
 ### Prerequisites
