@@ -6,7 +6,7 @@ from typing import Optional
 
 import src.config as config
 from .utils.file_handler import read_process_description
-from .core.llm import LLMService
+from .core.llm import OpenAILLMService, AzureLLMService
 from .core.generator import BPMNGeneratorService
 from .exceptions import BPMNGenerationError
 
@@ -83,7 +83,7 @@ def cli(description: Optional[str], file: Optional[str], output: str):
         api_key = config.get_api_key(settings)
         llm_config = config.get_model_config(settings)
 
-        llm_service = LLMService(api_key, llm_config)
+        llm_service = OpenAILLMService(api_key, llm_config) #AzureLLMService(api_key, llm_config)
         bpmn_service = BPMNGeneratorService(llm_service)
         logging.info("Services initialized.")
 
