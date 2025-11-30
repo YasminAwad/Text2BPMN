@@ -14,11 +14,11 @@ class Element(BaseModel):
         "intermediateEvent"
     ]
     name: str = Field(..., description="Short, action-based name for tasks")
-    eventType: Optional[Literal["none", "message", "timer", "error", "conditional"]] = Field(
+    eventType: Optional[Literal["none", "message", "timer", "error", "conditional", ""]] = Field(
         None, 
         description="Event type - required for events"
     )
-    gatewayDirection: Optional[Literal["diverging", "converging"]] = Field(
+    gatewayDirection: Optional[Literal["diverging", "converging", ""]] = Field(
         None,
         description="Gateway direction - required for gateways"
     )

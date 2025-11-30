@@ -150,21 +150,22 @@ class BPMNGeneratorService:
             f"Last error: {last_error}"
         ) from last_error
             
-    def _validate_bpmn_json(json_content: dict) -> BPMNResponse:
+    def _validate_bpmn_json(self, json_content: Dict) -> Dict:
         """
-        Validates and parses BPMN JSON content.
-        
+        Validates and checks the structure of the BPMN JSON content.
+    
         Args:
             json_content: Dictionary containing the BPMN structure
             
         Returns:
-            Validated BPMNResponse object
+            Original JSON content (as a dictionary) if valid
             
         Raises:
             ValidationError: If the JSON doesn't match the expected structure
         """
         try:
-            return BPMNResponse(**json_content)
+            BPMNResponse(**json_content)
+            return json_content
         except ValidationError as e:
             raise BPMNJsonError(f"Invalid BPMN JSON structure: {e}") from e
 
